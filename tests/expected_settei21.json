@@ -1,0 +1,10 @@
+{
+  "image": "https://cc0-kisaragi.grok.me/settei/21/card.jpg",
+  "fixture": "tests/fixtures/settei21_ocr.json",
+  "note": "フィクスチャは 2026-09-19 の全 37 箱から、残るべき文とごみ一片を抜いたもの。モデルを載せずに証する。",
+  "must_remain": [
+    "夜光餃子座",
+    "パートタイマー制服資料",
+    "光る餃子座ピン"
+  ]
+}

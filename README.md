@@ -4,19 +4,22 @@
 
 人間と、あとから入った AI の両方が読める説明。
 方針は [CODING.md](CODING.md)。次のセッションへの記録は [SESSION.md](SESSION.md)。
+契約は [schema/ocr_raw.v0.md](schema/ocr_raw.v0.md) と [schema/document_ocr.v1.md](schema/document_ocr.v1.md)。
 
 ## 今動く面
 
-[YomiToku](https://github.com/kotaro-kinoshita/yomitoku) の検出と認識を、別プロセスで回す。
-作業台に両方を同時に広げない。約 2GiB RAM・swap なしでフル CLI が 137 になるため。
+[YomiToku](https://github.com/kotaro-kinoshita/yomitoku) の検出と認識を別プロセスで回し、重み無しで読み順に戻す。
+作業台に検出器と認識器を同時に広げない。
 
 ```bash
 pip install yomitoku==0.15.0
-chmod +x run_staged.sh stage_detect.py stage_recognize.py
 ./run_staged.sh path/to/image.jpg results
+python3 tests/test_assemble.py
 ```
 
-YomiToku は現行の実行依存である。日常の最終形ではない。進め方は SESSION.md の順。
+`python3 tests/test_assemble.py` はモデルを載せない。凍結した v0 から本文が残るかだけを見る。
+
+YomiToku は現行の実行依存である。日常の最終形ではない。
 
 ## 注意
 
