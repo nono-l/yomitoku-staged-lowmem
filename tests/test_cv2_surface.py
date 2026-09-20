@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """既定経路が使ってよい cv2 名を凍結する。モデルを載せない。
 
-imread / resize / 輪郭 / warp は exact が死ぬので残す。
-rotate と mean は numpy で足りた。
+剥いた: rotate / mean / boxPoints。
+残す理由（exact 裁断）:
+- imread: JPEG 復号が OpenCV 固有。PIL に置くと画素が違う。
+- resize INTER_AREA / INTER_LINEAR: 補間が OpenCV 固有。numpy で置くと箱が動く。
+- findContours + RETR_LIST + CHAIN_APPROX_SIMPLE: 輪郭採取が OpenCV 固有。
+- minAreaRect: 回転キャリパーが OpenCV 固有。
+- fillPoly: 縮退の輪郭塩が OpenCV 固有。スコア閾に使う。
+- getPerspectiveTransform + warpPerspective: 単応と補間が OpenCV 固有。
+onnxruntime は推論エンジンなので残す。
 """
 
 from __future__ import annotations
