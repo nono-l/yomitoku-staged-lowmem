@@ -44,8 +44,16 @@
       "path": "weights/pinned/detector/model.onnx",
       "sha256": "1236c4c1761956d91f7ac7c897983d8b062320c9c62d7d36b0c54e29b05e21f4",
       "bytes": 101894163,
-      "drive_file_id": "1xOdSHOY-eWQ48eG2UE7nFmv6np4krigH",
-      "note": "HF には無い。weights/export_detector_onnx.py で書く。verify_weights の必須には入れない。"
+      "drive_file_id": "1xOdSHOY-eWQ48eG2UE7nFmv6np4krigH"
+    },
+    {
+      "id": "recognizer_encoder_onnx",
+      "role": "recognize-encoder-onnx",
+      "path": "weights/pinned/recognizer/encoder.onnx",
+      "sha256": "e6eab9c3266a6f986c5776929ec783e4fddec8e5e0325bc9fcbf503cc46d5b73",
+      "bytes": 22193776,
+      "drive_file_id": "1xTlRF9ygh5c-IwT69BMtT8cKsIZw8uzs",
+      "note": "AR 展開の全量 ONNX ではない。encoder だけ。入力 1x3x32x800。"
     }
   ]
 }
