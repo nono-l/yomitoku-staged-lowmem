@@ -67,7 +67,7 @@ def main() -> None:
 
     if not os.path.isfile(args.onnx):
         raise SystemExit(
-            f"missing ONNX: {args.onnx}\nexport: python3 weights/export_detector_onnx.py"
+            f"missing ONNX: {args.onnx}\nexport: python3 comparison/export/export_detector_onnx.py"
         )
     points, scores = detect_onnx(img, args.onnx)
 

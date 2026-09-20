@@ -20,7 +20,7 @@ python3 tests/test_default_no_yomitoku.py
 
 `python3 tests/test_assemble.py` はモデルを載せない。凍結した v0 から本文が残るかだけを見る。
 
-torch 比較と export は [comparison/](comparison/) と `weights/export_*.py`。そこだけ yomitoku 0.15.0 が要る。
+torch 比較と export は [comparison/](comparison/)。そこだけ yomitoku 0.15.0 が要る。
 
 ## 注意
 

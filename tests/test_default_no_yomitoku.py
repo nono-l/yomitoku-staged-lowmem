@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""既定経路が yomitoku を import しない。モデルを載せない。"""
+"""yomitoku / torch の import は comparison/ だけ。モデルを載せない。"""
 
 from __future__ import annotations
 
@@ -7,23 +7,19 @@ import ast
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT = [
-    "stage_detect.py",
-    "stage_recognize_onnx.py",
-    "stage_assemble.py",
-    "run_staged.sh",
-    "det/preprocess.py",
-    "det/postprocess.py",
-    "rec/crop.py",
-    "rec/decode.py",
-    "weights/verify_weights.py",
-]
+ALLOWED = ("comparison/",)
 
 
-def imports_of(path: str) -> list[str]:
-    if path.endswith(".sh"):
-        return []
-    tree = ast.parse(open(os.path.join(ROOT, path), encoding="utf-8").read(), filename=path)
+def py_files():
+    for dirpath, dirs, files in os.walk(ROOT):
+        dirs[:] = [d for d in dirs if d not in {".git", "__pycache__", "weights/pinned"}]
+        for name in files:
+            if name.endswith(".py"):
+                yield os.path.relpath(os.path.join(dirpath, name), ROOT)
+
+
+def imports_of(rel: str) -> list[str]:
+    tree = ast.parse(open(os.path.join(ROOT, rel), encoding="utf-8").read(), filename=rel)
     names = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -35,19 +31,26 @@ def imports_of(path: str) -> list[str]:
 
 def main() -> None:
     bad = []
-    for rel in DEFAULT:
+    allowed_hits = []
+    for rel in sorted(py_files()):
         names = imports_of(rel)
-        if "yomitoku" in names or "torch" in names:
-            bad.append(f"{rel}: {names}")
-        text = open(os.path.join(ROOT, rel), encoding="utf-8").read()
-        if rel.endswith(".sh"):
-            if "stage_recognize.py" in text and "stage_recognize_onnx.py" not in text:
-                bad.append(f"{rel} still calls torch rec")
-            if "yomitoku" in text:
-                bad.append(f"{rel} mentions yomitoku")
+        banned = [n for n in names if n in ("yomitoku", "torch")]
+        if not banned:
+            continue
+        if rel.startswith(ALLOWED):
+            allowed_hits.append(rel)
+            continue
+        bad.append(f"{rel}: {banned}")
+    sh = open(os.path.join(ROOT, "run_staged.sh"), encoding="utf-8").read()
+    if "yomitoku" in sh:
+        bad.append("run_staged.sh mentions yomitoku")
+    if "stage_recognize.py" in sh and "stage_recognize_onnx.py" not in sh:
+        bad.append("run_staged.sh still calls torch rec")
     if bad:
-        raise SystemExit("default path still depends:\n" + "\n".join(bad))
-    print("ok default path has no yomitoku/torch import")
+        raise SystemExit("yomitoku/torch leaked out of comparison/:\n" + "\n".join(bad))
+    if not allowed_hits:
+        raise SystemExit("comparison/ has no yomitoku imports; export was lost?")
+    print("ok yomitoku/torch only in", ", ".join(allowed_hits))
 
 
 if __name__ == "__main__":

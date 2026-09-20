@@ -1,6 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: charset / replace table を runtime pin に載せた。
+2026-09-20: yomitoku / torch の import を comparison/ に閉じ込めた。export もそこへ移した。
 
 ---
 
@@ -13,18 +13,18 @@
 5. 既定の検出・認識が yomitoku を import しないことを戻さない。
 6. 実体を git に載せない。
 7. 既定 verify に safetensors を強制しない。
+8. comparison/ の外で yomitoku / torch を import しない。
 
 ---
 
 ## 今動いている面
 
-- runtime pin: detector.onnx + encoder_dynw + decoder_step_dynw + charsetv3 + replace table
-- charset を 1 バイト足すと verify が落ちる
-- assemble / import 守りは緑
+- 既定: cv2 / numpy / onnxruntime / pyclipper
+- yomitoku: `comparison/` だけ
+- export: `comparison/export/`
 
 ---
 
 ## 次
 
-export は別プロセスのまま。
-残るのは comparison/ と export だけ yomitoku に依存すること。
+残るのは pyclipper（箱の offset）。剥ぐなら箱が exact のまま残すこと。
