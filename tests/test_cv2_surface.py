@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
 """既定経路が使ってよい cv2 名を凍結する。モデルを載せない。
 
-剥いた: rotate / mean / boxPoints。
-残す理由（exact 裁断）:
-- imread: JPEG 復号が OpenCV 固有。PIL に置くと画素が違う。
-- resize INTER_AREA / INTER_LINEAR: 補間が OpenCV 固有。numpy で置くと箱が動く。
-- findContours + RETR_LIST + CHAIN_APPROX_SIMPLE: 輪郭採取が OpenCV 固有。
-- minAreaRect: 回転キャリパーが OpenCV 固有。
-- fillPoly: 縮退の輪郭塩が OpenCV 固有。スコア閾に使う。
-- getPerspectiveTransform + warpPerspective: 単応と補間が OpenCV 固有。
+剥いた: rotate / mean / boxPoints に続き、imread / resize / 輪郭 / 単応も cvsurf へ。
+既定経路の名前はこの一覧だけ。中身は pip の cv2 ではない。
 onnxruntime は推論エンジンなので残す。
 """
 
@@ -18,7 +12,7 @@ import ast
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_PREFIX = ("comparison/", "tests/", "weights/")
+SKIP_PREFIX = ("comparison/", "tests/", "weights/", "cvsurf/")
 ALLOWED = {
     "CHAIN_APPROX_SIMPLE",
     "INTER_AREA",

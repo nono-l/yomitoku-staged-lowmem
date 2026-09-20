@@ -37,6 +37,13 @@ def main() -> None:
         names = imports_of(rel)
         if "pyclipper" in names:
             bad.append(f"{rel}: pyclipper")
+        if (
+            "cv2" in names
+            and not rel.startswith("cvsurf/")
+            and not rel.startswith("comparison/")
+            and not rel.startswith("tests/")
+        ):
+            bad.append(f"{rel}: import cv2 (use cvsurf)")
         banned = [n for n in names if n in BANNED]
         if not banned:
             continue

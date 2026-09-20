@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import cv2
 import numpy as np
+
+from cvsurf import cv2
 
 IMG_H = 32
 IMG_W = 800
