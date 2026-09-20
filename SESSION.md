@@ -1,7 +1,7 @@
 # 次のセッションへ
 
-2026-09-20: 実行用 ONNX と origin safetensors を 40MiB 未満の parts にして git に載せた。
-結合後は weights/pinned/ のまま gitignore。verify は parts から結合してハッシュを見る。
+2026-09-20: GitHub から新規 clone。pinned 無し。join → verify → run_staged で本文 remain。
+parts の Git 格納は来客路として通った。
 
 ---
 
@@ -24,12 +24,12 @@
 
 ## 今動いている面
 
-- clone → join_weights.py → verify → run_staged.sh
-- 検出 ONNX は凍結ハッシュのまま。認識 dynw は再 export（本文 remain）
-- parts は 40MiB 未満
+- origin clone → join → verify → run_staged。Drive 不要
+- 検出 37 箱。remain 夜光餃子座 / パートタイマー制服資料 / 光る餃子座ピン
+- この部品の切り出しは止まっている
 
 ---
 
 ## 次
 
-戻すのは使う価の新しい絵か、場面を出す別部品か。
+戻すのは使う価の新しい絵か、場面を出す別部品か。このリポジトリに場面語は混ぜない。
