@@ -25,14 +25,28 @@ DEC = os.path.join(ROOT, "weights", "pinned", "recognizer", "decoder_step_dynw.o
 
 
 def load_pos_queries(path):
-    from onnx import numpy_helper
-    import onnx
+    """decoder ONNX の initializer から取る。onnx パッケージは使わない。"""
+    import numpy as np
 
-    model = onnx.load(path)
-    for init in model.graph.initializer:
-        if init.name == "pos_queries":
-            return numpy_helper.to_array(init)
-    raise SystemExit(f"pos_queries missing in {path}")
+    data = open(path, "rb").read()
+    key = b"B\x0bpos_queriesJ"
+    j = data.find(key)
+    if j < 0:
+        raise SystemExit(f"pos_queries missing in {path}")
+    i = j + len(key)
+    n = 0
+    shift = 0
+    while True:
+        by = data[i]
+        i += 1
+        n |= (by & 0x7F) << shift
+        if by < 0x80:
+            break
+        shift += 7
+    arr = np.frombuffer(data[i : i + n], dtype=np.float32)
+    if arr.size != 1 * 101 * 192:
+        raise SystemExit(f"pos_queries size {arr.size}")
+    return arr.reshape(1, 101, 192)
 
 
 def decode_one(enc, dec, pos_queries, bos, pad, eos, num_steps, image_1chw):
