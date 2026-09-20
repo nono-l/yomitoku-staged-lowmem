@@ -1,6 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: 残る cv2 の exact 裁断を `tests/test_cv2_surface.py` に書いた。剥がない。
+2026-09-20: README を現状の既定経路に合わせた。分野語は入れていない。
 
 ---
 
@@ -21,12 +21,12 @@
 
 ## 今動いている面
 
-- 既定: cv2（裁断済みの残り）/ numpy / onnxruntime
-- 剥いだ: rotate / mean / boxPoints / offset / charset pin
+- README が既定の三段（detect / rec / assemble）を書く
+- 既定: cv2 / numpy / onnxruntime
 - 箱 37/37 exact
 
 ---
 
 ## 次
 
-腰は残した。次は分野側（店名の組み立て）ではなく、この部品の使い方を README に現状通り書く余地。
+部品の腰は残した。次に手を出すなら、使う人が実体を置く手順を weights/README に現状だけ書く余地。
