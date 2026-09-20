@@ -13,6 +13,7 @@
 
 検出と認識は別プロセス。検出の推論と箱出し、認識の encoder と decoder も別プロセス。同じプロセスに載せない。
 字の帯だけ切る。絵として何が描いてあるかは出さない。
+字が出たかは `ocr.json`。本文から落ちても raw にあれば字は出ている。
 
 出口の欄は [schema/ocr_raw.v0.md](schema/ocr_raw.v0.md) と [schema/document_ocr.v1.md](schema/document_ocr.v1.md)。
 
@@ -33,6 +34,7 @@
 
 ```bash
 python3 tests/test_assemble.py
+python3 tests/test_assemble_noise.py
 python3 tests/test_default_no_yomitoku.py
 python3 tests/test_cv2_surface.py
 python3 tests/test_offset.py
