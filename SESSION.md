@@ -1,7 +1,7 @@
 # 次のセッションへ
 
-2026-09-20: 既定の画素面を cvsurf に移した。pip の opencv-python は既定から外した。
-公式 .so は Qt/ffmpeg がリンカで付いてくるので、間引き配送は捨てた。
+2026-09-20: cvsurf の欠ける本体（geom / io / jpegdec）と入口切替を origin に載せた。
+runtime pip は numpy と onnxruntime。opencv-python は既定に戻さない。
 
 ---
 
@@ -24,13 +24,12 @@
 
 ## 今動いている面
 
-- origin clone → join → verify の重み路はそのまま
 - 既定 import は `from cvsurf import cv2`
-- runtime pip は numpy と onnxruntime だけ
-- 公式 cv2 との画素 exact は保証しない。remain は新しい画素で取り直す
+- BMP / PNG 往復、単応往復、合成の輪郭・矩形は緑
+- JPEG は基線のみ。公式画素 exact ではない
 
 ---
 
 ## 次
 
-settei21 で remain を取り直す。JPEG 復号と輪郭が公式と違うので、箱数が動く可能性がある。
+settei21 で remain を取り直す。
