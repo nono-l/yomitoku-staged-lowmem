@@ -27,7 +27,7 @@
 
 無い・違うと失敗する。ネットへ取りに行かない。置き方の詳細は [weights/README.md](weights/README.md)。
 
-普通の実行は OpenCV と ONNX Runtime と numpy を使う。yomitoku / torch / pyclipper は import しない。
+普通の実行は cvsurf と ONNX Runtime と numpy を使う。yomitoku / torch / pyclipper / opencv-python は import しない。
 
 ## 試験（重みなし）
 
@@ -37,6 +37,8 @@ python3 tests/test_default_no_yomitoku.py
 python3 tests/test_cv2_surface.py
 python3 tests/test_offset.py
 python3 tests/test_join_weights.py
+python3 tests/test_cvsurf_geom.py
+python3 tests/test_cvsurf_io.py
 ```
 
 凍結した出力から本文が残るか、余計な import が無いか、箱の膨らましが動いていないか、parts が元に戻るかを見る。
@@ -45,7 +47,7 @@ python3 tests/test_join_weights.py
 
 - 結合後の ONNX / safetensors は git に載せない。parts とハッシュは `weights/manifest.json`。
 - 元重みのライセンスは CC BY-NC-SA 4.0。商用は元を見る。
-- JPEG 読み、縮小、輪郭、歪み補正、ONNX Runtime は実行に残す。置き換えない。
+- JPEG / PNG / BMP の読み、縮小、輪郭、歪み補正は `cvsurf/`。ONNX Runtime は推論に残す。
 
 ## 他の紙
 

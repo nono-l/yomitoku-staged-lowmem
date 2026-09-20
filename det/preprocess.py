@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import cv2
 import numpy as np
+
+from cvsurf import cv2
 
 SHORTEST = 1280
 MAX_LENGTH = 1600
