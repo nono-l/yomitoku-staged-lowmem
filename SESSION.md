@@ -1,7 +1,7 @@
 # 次のセッションへ
 
-2026-09-20: pin_weights は origin だけ見る。offset の箱をモデルなしで凍結した。
-cv2 / onnxruntime は剥がない。JPEG・輪郭・warp を置き換えると exact が死ぬ。
+2026-09-20: cv2.rotate と cv2.mean を剥いだ。箱は exact。スコア差は 1e-6。
+残る cv2 は imread / resize / 輪郭 / warp。名前は tests/test_cv2_surface.py で凍結。
 
 ---
 
@@ -21,13 +21,12 @@ cv2 / onnxruntime は剥がない。JPEG・輪郭・warp を置き換えると e
 
 ## 今動いている面
 
-- 既定: cv2 / numpy / onnxruntime
-- pin_weights: origin safetensors
-- runtime verify: graphs + charset
-- offset ケース 3 件がモデルなしで緑
+- 既定: cv2（imread/resize/輪郭/warp）/ numpy / onnxruntime
+- rotate は np.rot90。box score の平均は numpy
+- 箱 37/37 exact
 
 ---
 
 ## 次
 
-cv2 と onnxruntime は腰。剥ぐなら exact が残る裁断を先に書く。
+残る cv2 と onnxruntime は腰。剥ぐなら exact 裁断を先に書く。
