@@ -1,6 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: 認識から TextRecognizer / 36MB torch 重みを外した比較用経路。C4 しない。
+2026-09-20: C4 済。認識既定を `stage_recognize_onnx.py` に切った。
 
 ---
 
@@ -9,7 +9,7 @@
 1. 検出と認識を同じプロセスに載せない。
 2. AR 展開 ONNX を既定にしない。
 3. 検出の既定を torch に戻さない。
-4. `stage_recognize_onnx.py` を `run_staged.sh` の既定にしない。
+4. 認識の既定を `stage_recognize.py`（torch）に戻さない。
 5. 実体を git に載せない。
 
 ---
@@ -17,14 +17,14 @@
 ## 今動いている面
 
 - 検出既定: 別置き ONNX
-- 認識既定: torch tiny dynamic_width
-- 比較: `stage_recognize_onnx.py`（重みなし、検出順、幅は箱ごと）
-- vs 既定 rec: 4 行違い（`11`/`1.` `44`/`48` `18.18`/`18.11` `。」`/`。`）。本文 3 つ残る
-- 差はバッチ垫きをしないため。本文ではない
+- 認識既定: `stage_recognize_onnx.py`（encoder_dynw + decoder_step_dynw、TextRecognizer なし）
+- torch 認識: `stage_recognize.py` 比較用
+- C4 提出前: lite 活字を assemble し、夜光餃子座 / パートタイマー制服資料 / 光る餃子座ピン が body に残る
+- 既定 rec と 4 行違う。端の数字・句読。許した
 
 ---
 
 ## 次
 
-C4 はまだしない。切るなら、端の 4 行を許して `run_staged.sh` の認識を `stage_recognize_onnx.py` にする。
-先に Dataset / Tokenizer を yomitoku から剥ぐかは別件。
+Dataset / Tokenizer を yomitoku から剥ぐ。
+とりあえず既定経路が ONNX だけで回ることを優先する。
