@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""認識を ONNX 二グラフで行う。比較用。既定の入口ではない。
+"""認識を ONNX 二グラフで行う。既定の入口。
 
-TextRecognizer は作らない。36MB の torch 重みを載せない。
-作物と字表は yomitoku の Dataset / Tokenizer だけ使う。
-pos_queries は decoder ONNX の中にある。
+TextRecognizer は作らない。Dataset / Tokenizer も使わない。
+作物と字表は rec/。pos_queries は decoder ONNX の中。
 """
 
 from __future__ import annotations
@@ -11,13 +10,16 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import unicodedata
+import sys
 
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
 ENC = os.path.join(ROOT, "weights", "pinned", "recognizer", "encoder_dynw.onnx")
 DEC = os.path.join(ROOT, "weights", "pinned", "recognizer", "decoder_step_dynw.onnx")
 
@@ -35,7 +37,6 @@ def load_pos_queries(path):
 
 def decode_one(enc, dec, pos_queries, bos, pad, eos, num_steps, image_1chw):
     import numpy as np
-    import torch
 
     memory = enc.run(["memory"], {"input": image_1chw})[0]
     tgt = np.full((1, num_steps), pad, dtype=np.int64)
@@ -62,26 +63,22 @@ def decode_one(enc, dec, pos_queries, bos, pad, eos, num_steps, image_1chw):
     p = np.concatenate(steps, axis=1)
     p = np.exp(p - p.max(axis=-1, keepdims=True))
     p = p / p.sum(axis=-1, keepdims=True)
-    return torch.tensor(p)
+    return p[0]
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="比較用 ONNX 認識。既定ではない")
+    parser = argparse.ArgumentParser(description="ONNX 認識。既定")
     parser.add_argument("image")
     parser.add_argument("--points", default="results/points.json")
-    parser.add_argument("-o", "--out", default="results/ocr_onnx.json")
+    parser.add_argument("-o", "--out", default="results/ocr.json")
     parser.add_argument("--encoder", default=ENC)
     parser.add_argument("--decoder", default=DEC)
     args = parser.parse_args()
 
     import cv2
     import onnxruntime as ort
-    from yomitoku.configs.cfg_text_recognizer_parseq_tiny_dynw_v5 import (
-        TextRecognizerPARSeqTinyDynwV5Config,
-    )
-    from yomitoku.data.dataset import ParseqDataset
-    from yomitoku.postprocessor import ParseqTokenizer as Tokenizer
-    from yomitoku.utils.misc import load_char_replace_table, load_charset
+    from rec.crop import crop_quad
+    from rec.decode import GreedyTokenizer, load_charset, load_replace_table
 
     for p in (args.encoder, args.decoder):
         if not os.path.isfile(p):
@@ -95,43 +92,39 @@ def main() -> None:
     points = payload["points"]
     print(f"img {img.shape} n_boxes {len(points)}", flush=True)
 
-    cfg = TextRecognizerPARSeqTinyDynwV5Config()
-    charset = load_charset(cfg.charset)
-    tokenizer = Tokenizer(charset)
-    table = (
-        load_char_replace_table(cfg.char_replace_table)
-        if cfg.char_replace_table
-        else None
-    )
-    dataset = ParseqDataset(cfg, img, points, num_workers=1, dynamic_width=True)
-    print(f"dataset {len(dataset)}", flush=True)
-
+    tokenizer = GreedyTokenizer(load_charset())
+    table = load_replace_table()
     so = ort.SessionOptions()
     so.intra_op_num_threads = 1
     enc = ort.InferenceSession(args.encoder, sess_options=so, providers=["CPUExecutionProvider"])
     dec = ort.InferenceSession(args.decoder, sess_options=so, providers=["CPUExecutionProvider"])
     pos_queries = load_pos_queries(args.decoder)
     bos, pad, eos = tokenizer.bos_id, tokenizer.pad_id, tokenizer.eos_id
-    num_steps = cfg.max_label_length + 1
+    num_steps = 101
 
     contents = []
     scores = []
-    for i in range(len(dataset)):
-        crop = dataset[i].unsqueeze(0).numpy()
+    kept_points = []
+    for i, quad in enumerate(points):
+        crop = crop_quad(img, quad)
+        if crop is None:
+            contents.append("")
+            scores.append(0.0)
+            kept_points.append(quad)
+            continue
         p = decode_one(enc, dec, pos_queries, bos, pad, eos, num_steps, crop)
-        pred, score = tokenizer.decode(p)
-        if cfg.nfkc_normalize:
-            pred = [unicodedata.normalize("NFKC", x) for x in pred]
-        if table is not None:
-            pred = [x.translate(table) for x in pred]
-        contents.append(pred[0])
-        scores.append(float(score[0].mean()) if hasattr(score[0], "mean") else float(score[0]))
-        if (i + 1) % 10 == 0 or i + 1 == len(dataset):
+        text, score = tokenizer.decode_one(p)
+        if table:
+            text = text.translate(table)
+        contents.append(text)
+        scores.append(score)
+        kept_points.append(quad)
+        if (i + 1) % 10 == 0 or i + 1 == len(points):
             print(f"offset {i + 1}", flush=True)
 
     words = [
         {"content": t, "rec_score": sc, "points": pt}
-        for t, sc, pt in zip(contents, scores, points)
+        for t, sc, pt in zip(contents, scores, kept_points)
     ]
     out_dir = os.path.dirname(os.path.abspath(args.out))
     if out_dir:
