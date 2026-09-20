@@ -2,8 +2,8 @@
 """検出だけを載せて終了する。
 
 認識器を import しない。約 2GiB で両方を初期化すると 137 になる。
-既定は別置き ONNX。torch 検出は --backend torch で残す。比較用であり、既定に戻さない。
-ONNX 経路では TextDetector を作らない。from_pretrained が重みを二重に広げるため。
+既定は別置き ONNX。onnx 経路は yomitoku も torch も使わない。
+torch 検出は --backend torch で残す。比較用であり、既定に戻さない。
 """
 
 from __future__ import annotations
@@ -12,50 +12,35 @@ import argparse
 import gc
 import json
 import os
+import sys
 
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
 DEFAULT_ONNX = os.path.join(ROOT, "weights", "pinned", "detector", "model.onnx")
 
 
 def detect_onnx(img, onnx_path: str):
-    import numpy as np
     import onnxruntime as ort
-    import torch
-    from yomitoku.data.functions import (
-        array_to_tensor,
-        resize_shortest_edge,
-        standardization_image,
-    )
-    from yomitoku.postprocessor import DBnetPostProcessor
+    from det.postprocess import boxes_from_binary
+    from det.preprocess import prepare_bgr
 
-    ori_h, ori_w = img.shape[:2]
-    x = img.copy()[:, :, ::-1].astype(np.float32)
-    # 本体設定の shortest/limit。ここを変えると箱が旧面とずれる。
-    x = resize_shortest_edge(x, 1280, 1600)
-    x = standardization_image(x)
-    tensor = array_to_tensor(x)
-
+    tensor = prepare_bgr(img)
     so = ort.SessionOptions()
     so.intra_op_num_threads = 1
     so.inter_op_num_threads = 1
     sess = ort.InferenceSession(
         onnx_path, sess_options=so, providers=["CPUExecutionProvider"]
     )
-    out = sess.run(["output"], {"input": tensor.numpy()})[0]
-    preds = {"binary": torch.tensor(out)}
-    pp = DBnetPostProcessor(
-        min_size=2,
-        thresh=0.3,
-        box_thresh=0.4,
-        max_candidates=1500,
-        unclip_ratio=3.5,
-    )
-    quads, scores = pp(preds, (ori_h, ori_w))
-    return quads, [float(s) for s in scores]
+    out = sess.run(["output"], {"input": tensor})[0]
+    ori_h, ori_w = img.shape[:2]
+    quads, scores = boxes_from_binary(out, (ori_h, ori_w))
+    return quads, scores
 
 
 def detect_torch(img):
