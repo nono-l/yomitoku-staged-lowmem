@@ -1,5 +1,5 @@
 #!/bin/sh
-# 検出の前に safetensors の別置きを見る。
+# 検出の前に、実行に使う ONNX のハッシュを見る。safetensors は見ない。
 # 検出の既定は別置き ONNX。認識の既定は stage_recognize_onnx.py。
 # torch 比較は comparison/ 。このスクリプトの既定に戻さない。
 # 検出プロセスが死んでから認識を起こす。
