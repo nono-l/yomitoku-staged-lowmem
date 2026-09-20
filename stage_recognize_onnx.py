@@ -75,8 +75,8 @@ def main() -> None:
     parser.add_argument("--decoder", default=DEC)
     args = parser.parse_args()
 
-    import cv2
     import onnxruntime as ort
+    from cvsurf import cv2
     from rec.crop import crop_quad
     from rec.decode import GreedyTokenizer, load_charset, load_replace_table
 
