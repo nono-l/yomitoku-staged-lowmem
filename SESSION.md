@@ -1,6 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: README を現状の既定経路に合わせた。分野語は入れていない。
+2026-09-20: 実体の置き手順を weights/README に現状だけ書いた。runtime と origin を混ぜない。
 
 ---
 
@@ -21,12 +21,12 @@
 
 ## 今動いている面
 
-- README が既定の三段（detect / rec / assemble）を書く
-- 既定: cv2 / numpy / onnxruntime
-- 箱 37/37 exact
+- 既定三段と重みの置き場が README にある
+- runtime: detector.onnx + encoder_dynw + decoder_step_dynw + 字表
+- origin safetensors は pin_weights だけ
 
 ---
 
 ## 次
 
-部品の腰は残した。次に手を出すなら、使う人が実体を置く手順を weights/README に現状だけ書く余地。
+リポジト内の切り出しは止まっている。残るのは cv2/推論の腰と Drive の共有（人がやる）。
