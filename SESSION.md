@@ -2,17 +2,15 @@
 
 このファイルは、何も知らない AI / 人がこの部品を壊さずに続けるためのメモ。
 コメント方針は [CODING.md](CODING.md)。
-「何をしているか」ではなく **なぜそうしているか・やると壊れること** を書く。
 
-このセッション（2026-09-20）: P0a / T0 / C1 / P0b / T1 まで緑。
-次は P1a（現行重みのハッシュ付き別置き。ローダはまだ YomiToku）。
+このセッション（2026-09-20）: P1a / C2 まで緑。
+次は P1b（検出だけ ONNX。既定の認識は旧面）。
 
 ---
 
 ## これは何か
 
-画素から、文書として読める活字を、箱と信頼度と読み順つきで取り出す部品。
-分野は知らない。試験片はきさらぎ駅前商店街であるが、製品の顔にしない。
+画素から図中の活字を、箱と信頼度と読み順つきで取り出す部品。分野は知らない。
 
 リポジトリ: https://github.com/nono-l/yomitoku-staged-lowmem
 
@@ -23,50 +21,39 @@
 1. **検出と認識を同じプロセスに載せない。**
 2. **分野語をスキーマに入れない。**
 3. **DBNet / PARSeq を今夜書き直さない。**
-4. **実行のたびに Hugging Face の「今の最新」を黙って引かない。**
-5. **提出してから動かす、にしない。** `python3 tests/test_assemble.py` が赤の面を出さない。
-6. **試験片を本体の名前にしない。**
+4. **実行のたびに Hugging Face の latest を黙って引かない。** revision は `weights/manifest.json`。
+5. **提出してから動かす、にしない。**
+6. **safetensors を git に載せない。** 別置きは `weights/pinned/`。
 
 ---
 
 ## 今動いている面
 
-入口は `run_staged.sh`（検出 → 認識 → 組み立て）。
-組み立てだけの証は `python3 tests/test_assemble.py`。モデル不要。
-2026-09-20 実行: body 残存、`夜光餃子座` / `パートタイマー制服資料` / `光る餃子座ピン` が残った。
+- `python3 tests/test_assemble.py` … モデル無し、本文残存
+- `python3 tests/test_weights.py` … 無い・違うと赤。実体があればハッシュも見る
+- `run_staged.sh` は検出前に `weights/verify_weights.py`
+- ローダはまだ YomiToku。ピンは「何を使ってよいか」の台帳
+
+ピン済（2026-09-20）:
+- detector `3ac8375d1fd124e8074b013a32f2085d1199654c` sha256 fa090966… 102492968 bytes
+- recognizer `abd24b78292afa849e206b42ebf72464ffd7eae5` sha256 498db515… 36097960 bytes
 
 ---
 
 ## 互い違いの順
 
-| 順 | 系統 | ID | 状態 |
-|---|---|---|---|
-| 1 | 切 | C0 | 済 |
-| 2 | 書 | P0a | 済 `schema/ocr_raw.v0.md` |
-| 3 | 証 | T0 | 済 `tests/expected_settei21.json` |
-| 4 | 切 | C1 | 済 `stage_assemble.py` |
-| 5 | 書 | P0b | 済 `schema/document_ocr.v1.md` |
-| 6 | 証 | T1 | 済 `python3 tests/test_assemble.py` |
-| 7 | 書 | P1a | 次。現行重みをハッシュ付き別置き |
-| 8 | 切 | C2 | 別置きが無ければ失敗する |
-| 9 | 書 | P1b | 検出だけ ONNX |
-| 10 | 証 | T2 | 旧検出と ONNX 検出 |
-| 11 | 切 | C3 | 検出の既定を ONNX |
-| 12 | 書 | P1c | 認識を ONNX |
-| 13 | 証 | T3 | 旧認識と ONNX 認識 |
-| 14 | 切 | C4 | 認識の既定を ONNX。torch 外し |
-| 15 | 証 | T4 | 同じ絵で v1 本文 |
-| 16 | 書 | P2 | 配布物をグラフ側に |
+| 順 | ID | 状態 |
+|---|---|---|
+| 1-6 | C0–T1 | 済 |
+| 7 | P1a | 済 manifest + pin |
+| 8 | C2 | 済 verify が入口の前 |
+| 9 | P1b | 次。検出だけ ONNX |
+| 10 | T2 | 旧検出と ONNX 検出 |
+| 11+ | C3–P2 | 未 |
 
 ---
 
-## ファイルを触るとき
-
-- 組み立てに店名を足さない。
-- P1a はローダを替えない。ハッシュと別置きだけ。
-- `tests/fixtures/settei21_ocr.json` は全箱の抽出である。残存証用。
-
 ## 既知の粗
 
-- tiny 認識は見出し先頭が欠ける（`クター|`）。合格は固有名が残ること。
-- サンドボックスは RAM 1.9GiB。site-packages がターンで消える。
+- YomiToku の from_pretrained はまだ HF キャッシュを見る。ピン目録と実際ローダの結合は P1b の前に処理するか、ONNX 化で踏まなくなる。
+- サンドボックスは RAM 1.9GiB。

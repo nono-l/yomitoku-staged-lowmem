@@ -1,0 +1,36 @@
+{
+  "schema": "weights_pin/v0",
+  "note": "実行のたびに Hugging Face の最新を引かない。ファイルは weights/pinned に別置きし、git には載せない。",
+  "files": [
+    {
+      "id": "detector",
+      "role": "detect",
+      "hf_repo": "KotaroKinoshita/yomitoku-text-detector-dbnet-v2_1",
+      "revision": "3ac8375d1fd124e8074b013a32f2085d1199654c",
+      "remote_name": "model.safetensors",
+      "path": "weights/pinned/detector/model.safetensors",
+      "sha256": "fa090966e7f7c1783a10d8543d150405487906ef3aabcb07db7bc57b39a1e7c5",
+      "bytes": 102492968
+    },
+    {
+      "id": "recognizer",
+      "role": "recognize",
+      "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
+      "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
+      "remote_name": "model.safetensors",
+      "path": "weights/pinned/recognizer/model.safetensors",
+      "sha256": "498db515b5cc7917be3b27664569eddda63e709f70e0de118bac95e97c7dd689",
+      "bytes": 36097960
+    },
+    {
+      "id": "recognizer_manifest",
+      "role": "recognize-meta",
+      "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
+      "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
+      "remote_name": "v5_manifest.json",
+      "path": "weights/pinned/recognizer/v5_manifest.json",
+      "sha256": "15c731106864e5de07e0a513921791d7d6514b509788d31861333fb92c6fd2ec",
+      "bytes": 500
+    }
+  ]
+}

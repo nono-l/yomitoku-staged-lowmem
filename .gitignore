@@ -6,3 +6,4 @@ venv/
 *.jpg
 *.jpeg
 *.png
+weights/pinned/

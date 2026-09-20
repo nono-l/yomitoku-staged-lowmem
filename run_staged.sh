@@ -1,10 +1,13 @@
 #!/bin/sh
-# 検出プロセスが死んでから認識を起こす。同じ Python で順に import すると重みが残る。
-# 組み立ては重みを載せない。認識の後に別プロセスで呼ぶ。
+# 検出の前に別置きを見る。無いなら止める。黙って latest を引かない。
+# 検出プロセスが死んでから認識を起こす。
+# 組み立ては重みを載せない。
 set -eu
 
 IMAGE=${1:?usage: ./run_staged.sh IMAGE [outdir]}
 OUTDIR=${2:-results}
+
+python3 weights/verify_weights.py
 
 mkdir -p "$OUTDIR"
 python3 stage_detect.py "$IMAGE" -o "$OUTDIR/points.json"
