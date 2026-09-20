@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Stage 2: load only the tiny recognizer, read boxes from stage 1, exit.
+"""認識だけを載せて終了する。
 
-Run this in a new process after stage_detect.py so detector weights are gone.
+stage_detect.py の後に、別プロセスで起こす。検出器の重みが残っていると 137 に戻る。
+tiny を使うのは、middle がこの箱に載らないため。
 """
 
 from __future__ import annotations
@@ -17,24 +18,24 @@ os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Recognize text in saved boxes, in small chunks.")
-    parser.add_argument("image", help="Path to the same input image used in stage 1")
+    parser = argparse.ArgumentParser(description="保存した箱を小分割で認識する")
+    parser.add_argument("image", help="検出と同じ入力画像")
     parser.add_argument(
         "--points",
         default="results/points.json",
-        help="JSON written by stage_detect.py",
+        help="stage_detect.py が書いた JSON",
     )
     parser.add_argument(
         "-o",
         "--out",
         default="results/ocr.json",
-        help="JSON path for words (default: results/ocr.json)",
+        help="語の JSON（既定: results/ocr.json）",
     )
-    parser.add_argument("--chunk", type=int, default=6, help="Boxes per forward pass")
+    parser.add_argument("--chunk", type=int, default=6, help="1 回の箱数。増やすとピーク RAM が上がる")
     parser.add_argument(
         "--model",
         default="parseq-tiny-dynw-v5",
-        help="YomiToku recognizer name (lite default)",
+        help="認識モデル名（lite 既定）",
     )
     args = parser.parse_args()
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Two-process pipeline: detector dies before recognizer starts.
+# 検出プロセスが死んでから認識を起こす。同じ Python で順に import すると重みが残る。
 set -eu
 
 IMAGE=${1:?usage: ./run_staged.sh IMAGE [outdir]}

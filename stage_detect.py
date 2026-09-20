@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Stage 1: load only the text detector, write boxes, exit.
+"""検出だけを載せて終了する。
 
-Designed for machines around 2GiB RAM. Do not import the recognizer here.
+認識器を import しない。約 2GiB で両方を初期化すると 137 になる。
+フル CLI や Layout / Table も同じ理由で呼ばない。
 """
 
 from __future__ import annotations
@@ -11,19 +12,20 @@ import gc
 import json
 import os
 
+# 検出だけでも、デフォルトの並列はこの箱の RAM を食いつぶす。
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Detect text boxes, then free the detector.")
-    parser.add_argument("image", help="Path to an input image")
+    parser = argparse.ArgumentParser(description="文字箱だけ出して検出器を捨てる")
+    parser.add_argument("image", help="入力画像")
     parser.add_argument(
         "-o",
         "--out",
         default="results/points.json",
-        help="JSON path for boxes (default: results/points.json)",
+        help="箱の JSON（既定: results/points.json）",
     )
     args = parser.parse_args()
 
