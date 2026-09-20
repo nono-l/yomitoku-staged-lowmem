@@ -46,7 +46,8 @@
       "path": "weights/pinned/recognizer/encoder.onnx",
       "sha256": "e6eab9c3266a6f986c5776929ec783e4fddec8e5e0325bc9fcbf503cc46d5b73",
       "bytes": 22193776,
-      "drive_file_id": "1xTlRF9ygh5c-IwT69BMtT8cKsIZw8uzs"
+      "drive_file_id": "1xTlRF9ygh5c-IwT69BMtT8cKsIZw8uzs",
+      "note": "32x800 固定。比較用の既定ではない。"
     },
     {
       "id": "recognizer_decoder_step_onnx",
@@ -54,7 +55,23 @@
       "sha256": "79121be53a29db3f46dbae797c42157dbef93cca523e4f69aedac4e68e30c7fe",
       "bytes": 14186494,
       "drive_file_id": "1_--vmKboGsqUIbsyu2ArCv5MhpG0d0LT",
-      "note": "バッチ=1、len 動的。AR 展開ではない。"
+      "note": "memory 長さ 800 固定。"
+    },
+    {
+      "id": "recognizer_encoder_dynw_onnx",
+      "path": "weights/pinned/recognizer/encoder_dynw.onnx",
+      "sha256": "1baa7e40a9ffa55d8bb78cf6521e15ee5281448d31169c1279a02047a3004b79",
+      "bytes": 22966948,
+      "drive_file_id": "1sDOBIYnkAWFDlaydO6k3rmgiwaCWCJ5s",
+      "note": "幅動的。1x3x32xW。比較用の encoder。"
+    },
+    {
+      "id": "recognizer_decoder_step_dynw_onnx",
+      "path": "weights/pinned/recognizer/decoder_step_dynw.onnx",
+      "sha256": "e00d9678c6f390d9801c015057c233db2209238a35a4f8c2ee8b5f23ec063ebc",
+      "bytes": 14186461,
+      "drive_file_id": "1J8G8suiR57lSgfJsR3FUZ0KYM89PVs-r",
+      "note": "memory seq 動的。AR 展開ではない。"
     }
   ]
 }

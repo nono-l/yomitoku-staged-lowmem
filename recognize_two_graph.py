@@ -2,8 +2,7 @@
 """二グラフ認識。比較用であり、既定の入口ではない。
 
 encoder と decoder 1 ステップを別置き ONNX で回し、検出順へ戻す。
-バッチ復元を忘れると活字の袋は合っても行が入れ替わる。
-encoder は 1x3x32x800 固定なので dynamic_width は使わない。
+幅は既定 rec と同じ dynamic_width。バッチ復元を忘れると行が入れ替わる。
 """
 
 from __future__ import annotations
@@ -18,8 +17,8 @@ os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-ENC = os.path.join(ROOT, "weights", "pinned", "recognizer", "encoder.onnx")
-DEC = os.path.join(ROOT, "weights", "pinned", "recognizer", "decoder_step.onnx")
+ENC = os.path.join(ROOT, "weights", "pinned", "recognizer", "encoder_dynw.onnx")
+DEC = os.path.join(ROOT, "weights", "pinned", "recognizer", "decoder_step_dynw.onnx")
 
 
 def decode_one(enc, dec, pos_queries, bos, pad, eos, num_steps, image_1chw):
@@ -83,7 +82,6 @@ def main() -> None:
         visualize=False,
         infer_onnx=False,
         num_parallel_batches=1,
-        dynamic_width=False,
     )
     m = rec.model
     so = ort.SessionOptions()
