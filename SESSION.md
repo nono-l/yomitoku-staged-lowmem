@@ -1,7 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: cv2.boxPoints を剥いだ。箱は exact。
-残る cv2 は imread / resize / 輪郭 / fillPoly / warp。
+2026-09-20: 残る cv2 の exact 裁断を `tests/test_cv2_surface.py` に書いた。剥がない。
 
 ---
 
@@ -16,17 +15,18 @@
 7. 既定 verify に safetensors を強制しない。
 8. comparison/ の外で yomitoku / torch を import しない。
 9. 既定に pyclipper を戻さない。
+10. 裁断なしに imread / resize / 輪郭 / warp / onnxruntime を剥がない。
 
 ---
 
 ## 今動いている面
 
-- 既定: cv2（imread/resize/輪郭/fillPoly/warp）/ numpy / onnxruntime
-- boxPoints / rotate / mean は numpy
+- 既定: cv2（裁断済みの残り）/ numpy / onnxruntime
+- 剥いだ: rotate / mean / boxPoints / offset / charset pin
 - 箱 37/37 exact
 
 ---
 
 ## 次
 
-残る cv2 と onnxruntime は腰。JPEG・輪郭・warp を剥ぐ裁断はまだない。
+腰は残した。次は分野側（店名の組み立て）ではなく、この部品の使い方を README に現状通り書く余地。
