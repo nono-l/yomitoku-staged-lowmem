@@ -1,0 +1,20 @@
+{
+  "repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
+  "checkpoint": "checkpoint_0_49999.pth",
+  "checkpoint_sha256": "919c6b8dce9875170403641fb55a5e94092c12e4ae28a5b3669a58f9a333851f",
+  "num_tokens": 7522,
+  "data": {
+    "num_workers": 4,
+    "batch_size": 10,
+    "img_size": [
+      32,
+      800
+    ],
+    "dynamic_width": true,
+    "batch_bucketing": true,
+    "resize_policy": "fit",
+    "width_budget": 8000,
+    "max_batch_size": 64
+  },
+  "nfkc_normalize": false
+}
