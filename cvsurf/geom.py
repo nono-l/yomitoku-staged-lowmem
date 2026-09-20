@@ -2,6 +2,7 @@
 
 minAreaRect の角度は、長辺が x に近いとき 0 に近い。
 OpenCV 5 の符号規約と一致するとは限らない。箱の4点は _box_points 側で組む。
+歪み補正は最終行・最終列も残す。3px 高の作物で消えると文字が欠ける。
 """
 
 from __future__ import annotations
@@ -47,7 +48,7 @@ def _sample_linear(src, ys, xs):
     x0 = np.floor(xs).astype(np.int32)
     wy = ys - y0
     wx = xs - x0
-    inside = (y0 >= 0) & (y0 < old_h - 1) & (x0 >= 0) & (x0 < old_w - 1)
+    inside = (ys >= 0) & (ys <= old_h - 1) & (xs >= 0) & (xs <= old_w - 1)
     y0c = np.clip(y0, 0, old_h - 1)
     x0c = np.clip(x0, 0, old_w - 1)
     y1c = np.clip(y0 + 1, 0, old_h - 1)
