@@ -85,6 +85,18 @@ def test_find_contours_square():
     print("ok findContours")
 
 
+def test_find_contours_wide():
+    img = np.zeros((200, 300), dtype=np.uint8)
+    img[40:80, 50:180] = 255
+    cnts, _ = surf.findContours(img, RETR_LIST, CHAIN_APPROX_SIMPLE)
+    if len(cnts) < 1:
+        raise SystemExit("wide image no contour")
+    pts = cnts[0].reshape(-1, 2)
+    if pts[:, 0].min() > 50 or pts[:, 0].max() < 179:
+        raise SystemExit(f"wide contour xs {pts[:, 0].min()} {pts[:, 0].max()}")
+    print("ok findContours wide")
+
+
 def test_warp_keeps_last_row():
     img = np.arange(30, dtype=np.uint8).reshape(3, 10)
     m = np.eye(3, dtype=np.float64)
@@ -105,6 +117,7 @@ def main():
     test_area_integer_scale()
     test_min_area_rect_axis()
     test_find_contours_square()
+    test_find_contours_wide()
     test_warp_keeps_last_row()
     print("ok cvsurf geom")
 
