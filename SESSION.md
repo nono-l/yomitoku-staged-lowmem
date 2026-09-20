@@ -1,7 +1,7 @@
 # 次のセッションへ
 
-2026-09-20: cvsurf の欠ける本体（geom / io / jpegdec）と入口切替を origin に載せた。
-runtime pip は numpy と onnxruntime。opencv-python は既定に戻さない。
+2026-09-20: 認識入口（rec/crop と stage_recognize_onnx）も cvsurf に切った。
+既定経路に pip の cv2 import は残っていない。
 
 ---
 
@@ -24,7 +24,7 @@ runtime pip は numpy と onnxruntime。opencv-python は既定に戻さない�
 
 ## 今動いている面
 
-- 既定 import は `from cvsurf import cv2`
+- 既定 import は `from cvsurf import cv2`（検出も認識も）
 - BMP / PNG 往復、単応往復、合成の輪郭・矩形は緑
 - JPEG は基線のみ。公式画素 exact ではない
 
