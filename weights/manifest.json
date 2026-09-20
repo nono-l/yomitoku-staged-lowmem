@@ -78,5 +78,21 @@
       "runtime": true,
       "note": "memory seq 動的。AR 展開ではない。既定認識の decoder。"
     }
+  ],
+  "resources": [
+    {
+      "id": "charset_v3",
+      "path": "rec/resource/charsetv3.txt",
+      "sha256": "ee6f3fae3e35a0fa8d811a4dfda6328b9b048d59f5a7ffd3a471dec3cd110f28",
+      "bytes": 22134,
+      "runtime": true
+    },
+    {
+      "id": "char_replace_v3",
+      "path": "rec/resource/character_post_expand_table_v3.csv",
+      "sha256": "cdc2277a3ec8787cfb5addb8509e23d5471c2c31a540c0b565007f6add8f7236",
+      "bytes": 2069,
+      "runtime": true
+    }
   ]
 }
