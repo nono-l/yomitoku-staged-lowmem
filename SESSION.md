@@ -1,6 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: 実体の置き手順を weights/README に現状だけ書いた。runtime と origin を混ぜない。
+2026-09-20: README と ocr_raw/v0 に「活字だけ。場面は出さない」を書いた。
 
 ---
 
@@ -16,17 +16,17 @@
 8. comparison/ の外で yomitoku / torch を import しない。
 9. 既定に pyclipper を戻さない。
 10. 裁断なしに imread / resize / 輪郭 / warp / onnxruntime を剥がない。
+11. この部品に場面語を混ぜない。
 
 ---
 
 ## 今動いている面
 
-- 既定三段と重みの置き場が README にある
-- runtime: detector.onnx + encoder_dynw + decoder_step_dynw + 字表
-- origin safetensors は pin_weights だけ
+- 活字の箱・文字列・スコア・読み順
+- 場面の説明は別部品
 
 ---
 
 ## 次
 
-リポジト内の切り出しは止まっている。残るのは cv2/推論の腰と Drive の共有（人がやる）。
+この部品の切り出しは止まっている。次の切は、場面を出す別腰か、使う価の新しい絵か。
