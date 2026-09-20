@@ -44,7 +44,9 @@ def _follow(binary, sx, sy, visited):
     x, y = sx, sy
     direction = 0
     visited[y, x] = 1
-    for _ in range(h * w * 4 + 4):
+    # 閉じないときの上限。h*w*4 だと 2GiB で落ちる。
+    limit = min(h * w, 20000)
+    for _ in range(limit):
         found = False
         for k in range(8):
             nd = (direction + k) % 8
