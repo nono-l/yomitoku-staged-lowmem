@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """別置きが無いときは落ちる。ハッシュが違うときも落ちる。ネットへ行かない。
-既定 verify は runtime graphs。safetensors は見ない。
+既定 verify は runtime graphs と字表。safetensors は見ない。
 """
 
 from __future__ import annotations
@@ -13,10 +13,19 @@ import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "weights"))
-from verify_weights import runtime_graphs, verify
+from verify_weights import runtime_graphs, runtime_items, verify
 
 
 def main() -> None:
+    with open(os.path.join(ROOT, "weights", "manifest.json"), encoding="utf-8") as f:
+        man = json.load(f)
+    items = runtime_items(man)
+    if not any(i["id"] == "charset_v3" for i in items):
+        raise SystemExit("charset_v3 missing from runtime pin")
+    if not any(i["id"] == "char_replace_v3" for i in items):
+        raise SystemExit("char_replace_v3 missing from runtime pin")
+    print("ok charset in runtime pin")
+
     with tempfile.TemporaryDirectory() as tmp:
         man_src = os.path.join(ROOT, "weights", "manifest.json")
         dest_man = os.path.join(tmp, "weights")
@@ -29,8 +38,6 @@ def main() -> None:
             raise SystemExit("expected missing, got: " + "; ".join(errors))
         print("ok missing runtime fails")
 
-        with open(man_src, encoding="utf-8") as f:
-            man = json.load(f)
         graphs = runtime_graphs(man)
         if not graphs:
             raise SystemExit("manifest has no runtime graphs")
@@ -56,7 +63,12 @@ def main() -> None:
             raise SystemExit("live runtime pin broken: " + "; ".join(errors))
         print("ok live runtime pin")
     else:
-        print("skip live runtime pin (not in this tree)")
+        # 字表だけでも欠けるなら字表の pin が壊れている
+        errors = verify(ROOT, what="runtime")
+        charset_err = [e for e in errors if "charset" in e or "character_post" in e]
+        if charset_err:
+            raise SystemExit("charset pin broken: " + "; ".join(charset_err))
+        print("skip live graph pin (not in this tree); charset ok")
 
 
 if __name__ == "__main__":

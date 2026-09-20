@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""別置きのハッシュを見る。
+"""別置きと字表のハッシュを見る。
 
-既定は実行に使う graphs だけ。safetensors は比較・再 export 用で、
+既定は実行に使う graphs と字表。safetensors は比較・再 export 用で、
 入口の条件にしない。無い・違うなら失敗する。ネットへ救済しに行かない。
 """
 
@@ -48,16 +48,21 @@ def load_manifest(root: str) -> dict:
 
 
 def runtime_graphs(man: dict) -> list:
-    items = [g for g in man.get("graphs", []) if g.get("runtime")]
-    if not items:
-        return []
-    return items
+    return [g for g in man.get("graphs", []) if g.get("runtime")]
+
+
+def runtime_resources(man: dict) -> list:
+    return [r for r in man.get("resources", []) if r.get("runtime")]
+
+
+def runtime_items(man: dict) -> list:
+    return runtime_graphs(man) + runtime_resources(man)
 
 
 def verify(root: str = ROOT, what: str = "runtime") -> list:
     man = load_manifest(root)
     if what == "runtime":
-        items = runtime_graphs(man)
+        items = runtime_items(man)
         if not items:
             return ["manifest has no runtime graphs"]
         return _check(root, items)
@@ -67,7 +72,7 @@ def verify(root: str = ROOT, what: str = "runtime") -> list:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="別置きのハッシュを見る")
+    parser = argparse.ArgumentParser(description="別置きと字表のハッシュを見る")
     parser.add_argument(
         "--origin",
         action="store_true",

@@ -1,6 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: 既定 verify を runtime ONNX に寄せた。safetensors は `--origin`。
+2026-09-20: charset / replace table を runtime pin に載せた。
 
 ---
 
@@ -18,13 +18,13 @@
 
 ## 今動いている面
 
-- `python3 weights/verify_weights.py` → detector.onnx + encoder_dynw + decoder_step_dynw
-- `--origin` だけ safetensors
-- 活字の assemble と import 守りは緑
+- runtime pin: detector.onnx + encoder_dynw + decoder_step_dynw + charsetv3 + replace table
+- charset を 1 バイト足すと verify が落ちる
+- assemble / import 守りは緑
 
 ---
 
 ## 次
 
 export は別プロセスのまま。
-charset もハッシュを manifest に載せる余地がある。
+残るのは comparison/ と export だけ yomitoku に依存すること。
