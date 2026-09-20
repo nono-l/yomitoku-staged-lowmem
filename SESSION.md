@@ -1,6 +1,7 @@
 # 次のセッションへ
 
-2026-09-20: pyclipper を剥いだ。箱は凍結フィクスチャと exact。
+2026-09-20: pin_weights は origin だけ見る。offset の箱をモデルなしで凍結した。
+cv2 / onnxruntime は剥がない。JPEG・輪郭・warp を置き換えると exact が死ぬ。
 
 ---
 
@@ -21,12 +22,12 @@
 ## 今動いている面
 
 - 既定: cv2 / numpy / onnxruntime
-- offset: `det/offset.py`（Clipper 6.4.2 JT_ROUND 相当）
-- 箱 37/37 exact vs points_torch_settei21.json
+- pin_weights: origin safetensors
+- runtime verify: graphs + charset
+- offset ケース 3 件がモデルなしで緑
 
 ---
 
 ## 次
 
-残る外部役は cv2 と onnxruntime。
-そこを剥ぐなら、箱も活字も exact のまま。
+cv2 と onnxruntime は腰。剥ぐなら exact が残る裁断を先に書く。

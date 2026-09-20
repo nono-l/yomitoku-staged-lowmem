@@ -1,6 +1,6 @@
 # ocr_raw/v0
 
-いまの `stage_recognize.py` が書く JSON の契約である。
+いまの `stage_recognize_onnx.py` が書く JSON の契約である。
 分野語は持たない。読み順も持たない。検出順の配列である。
 
 ## 形

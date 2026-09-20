@@ -14,14 +14,12 @@ import os
 import re
 
 SCHEMA = "document_ocr/v1"
-# 行とみなす y の幅。小さすぎると一見出しが複数段に割れる。
 ROW_Y = 16
 NOISE_SCORE = 0.25
 NOISE_SHORT = re.compile(r"^[\d\W_]{1,2}$")
 
 
 def box_key(points: list) -> tuple:
-    # 四隅の上端で段を切り、左端で段内順を決める。重心だと縦長箱が隣の段に落ちる。
     xs = [p[0] for p in points]
     ys = [p[1] for p in points]
     return (int(min(ys) // ROW_Y), min(xs), min(ys))
@@ -66,7 +64,7 @@ def assemble(words: list, source: str | None = None) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="v0 の箱列を読み順の本文に戻す")
-    parser.add_argument("ocr_json", help="stage_recognize.py が出した v0 JSON")
+    parser.add_argument("ocr_json", help="stage_recognize_onnx.py が出した v0 JSON")
     parser.add_argument(
         "-o",
         "--out",
