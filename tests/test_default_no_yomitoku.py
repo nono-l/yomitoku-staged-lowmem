@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""yomitoku / torch の import は comparison/ だけ。モデルを載せない。"""
+"""yomitoku / torch の import は comparison/ だけ。pyclipper はどこにも置かない。モデルを載せない。"""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ALLOWED = ("comparison/",)
+BANNED = ("yomitoku", "torch")
 
 
 def py_files():
@@ -34,7 +35,9 @@ def main() -> None:
     allowed_hits = []
     for rel in sorted(py_files()):
         names = imports_of(rel)
-        banned = [n for n in names if n in ("yomitoku", "torch")]
+        if "pyclipper" in names:
+            bad.append(f"{rel}: pyclipper")
+        banned = [n for n in names if n in BANNED]
         if not banned:
             continue
         if rel.startswith(ALLOWED):
@@ -47,10 +50,10 @@ def main() -> None:
     if "stage_recognize.py" in sh and "stage_recognize_onnx.py" not in sh:
         bad.append("run_staged.sh still calls torch rec")
     if bad:
-        raise SystemExit("yomitoku/torch leaked out of comparison/:\n" + "\n".join(bad))
+        raise SystemExit("import leaked:\n" + "\n".join(bad))
     if not allowed_hits:
         raise SystemExit("comparison/ has no yomitoku imports; export was lost?")
-    print("ok yomitoku/torch only in", ", ".join(allowed_hits))
+    print("ok yomitoku/torch only in comparison/; no pyclipper")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,5 @@
-# 既定経路。yomitoku / torch は入れない。
+# 既定経路。yomitoku / torch / pyclipper は入れない。
 # 2026-09-20 の実行環境で箱が exact だった版。
 opencv-python==5.0.0.93
 numpy==2.2.6
 onnxruntime==1.23.2
-pyclipper==1.4.0

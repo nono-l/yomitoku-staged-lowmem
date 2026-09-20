@@ -1,6 +1,6 @@
 # 次のセッションへ
 
-2026-09-20: yomitoku / torch の import を comparison/ に閉じ込めた。export もそこへ移した。
+2026-09-20: pyclipper を剥いだ。箱は凍結フィクスチャと exact。
 
 ---
 
@@ -14,17 +14,19 @@
 6. 実体を git に載せない。
 7. 既定 verify に safetensors を強制しない。
 8. comparison/ の外で yomitoku / torch を import しない。
+9. 既定に pyclipper を戻さない。
 
 ---
 
 ## 今動いている面
 
-- 既定: cv2 / numpy / onnxruntime / pyclipper
-- yomitoku: `comparison/` だけ
-- export: `comparison/export/`
+- 既定: cv2 / numpy / onnxruntime
+- offset: `det/offset.py`（Clipper 6.4.2 JT_ROUND 相当）
+- 箱 37/37 exact vs points_torch_settei21.json
 
 ---
 
 ## 次
 
-残るのは pyclipper（箱の offset）。剥ぐなら箱が exact のまま残すこと。
+残る外部役は cv2 と onnxruntime。
+そこを剥ぐなら、箱も活字も exact のまま。

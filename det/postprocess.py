@@ -1,4 +1,4 @@
-"""DBNet の箱出し。torch は使わない。area/length は shoelace。offset は pyclipper。"""
+"""DBNet の箱出し。torch は使わない。area/length は shoelace。offset は det.offset。"""
 
 from __future__ import annotations
 
@@ -6,7 +6,6 @@ import math
 
 import cv2
 import numpy as np
-import pyclipper
 
 MIN_SIZE = 2
 THRESH = 0.3
@@ -25,16 +24,15 @@ def _area_length(box):
 
 
 def _unclip(box, unclip_ratio):
+    from det.offset import offset_round
+
     width = box[:, 0].max() - box[:, 0].min()
     height = box[:, 1].max() - box[:, 1].min()
     box_dist = min(width, height)
     ratio = unclip_ratio / math.sqrt(box_dist)
     area, length = _area_length(box)
     distance = area * ratio / length
-    offset = pyclipper.PyclipperOffset()
-    offset.AddPath(box, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
-    expanded = np.array(offset.Execute(distance))
-    return expanded
+    return np.array(offset_round(box, distance), dtype=np.float32)
 
 
 def _mini_boxes(contour):
