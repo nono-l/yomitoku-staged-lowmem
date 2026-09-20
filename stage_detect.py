@@ -2,8 +2,8 @@
 """検出だけを載せて終了する。
 
 認識器を import しない。約 2GiB で両方を初期化すると 137 になる。
-既定は別置き ONNX。onnx 経路は yomitoku も torch も使わない。
-torch 検出は --backend torch で残す。比較用であり、既定に戻さない。
+既定は別置き ONNX。yomitoku も torch も使わない。
+torch 検出は comparison/stage_detect_torch.py。
 """
 
 from __future__ import annotations
@@ -16,7 +16,6 @@ import sys
 
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
-os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 if ROOT not in sys.path:
@@ -43,20 +42,6 @@ def detect_onnx(img, onnx_path: str):
     return quads, scores
 
 
-def detect_torch(img):
-    import torch
-    from yomitoku.text_detector import TextDetector
-
-    torch.set_num_threads(1)
-    det = TextDetector(device="cpu", visualize=False, infer_onnx=False)
-    outputs, _ = det(img)
-    points = outputs.points
-    scores = [float(s) for s in outputs.scores]
-    del det, outputs
-    gc.collect()
-    return points, scores
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="文字箱だけ出して検出器を捨てる")
     parser.add_argument("image", help="入力画像")
@@ -65,12 +50,6 @@ def main() -> None:
         "--out",
         default="results/points.json",
         help="箱の JSON（既定: results/points.json）",
-    )
-    parser.add_argument(
-        "--backend",
-        choices=("onnx", "torch"),
-        default="onnx",
-        help="既定 onnx。torch は比較用",
     )
     parser.add_argument(
         "--onnx",
@@ -84,16 +63,13 @@ def main() -> None:
     img = cv2.imread(args.image)
     if img is None:
         raise SystemExit(f"failed to read image: {args.image}")
-    print(f"img {img.shape} backend {args.backend}", flush=True)
+    print(f"img {img.shape} backend onnx", flush=True)
 
-    if args.backend == "onnx":
-        if not os.path.isfile(args.onnx):
-            raise SystemExit(
-                f"missing ONNX: {args.onnx}\nexport: python3 weights/export_detector_onnx.py"
-            )
-        points, scores = detect_onnx(img, args.onnx)
-    else:
-        points, scores = detect_torch(img)
+    if not os.path.isfile(args.onnx):
+        raise SystemExit(
+            f"missing ONNX: {args.onnx}\nexport: python3 weights/export_detector_onnx.py"
+        )
+    points, scores = detect_onnx(img, args.onnx)
 
     print(f"n_boxes {len(points)}", flush=True)
     out_dir = os.path.dirname(os.path.abspath(args.out))

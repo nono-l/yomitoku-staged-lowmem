@@ -1,1 +1,2 @@
-yomitoku==0.15.0
+# 既定経路。比較用は requirements.compare.txt。
+-r requirements.runtime.txt

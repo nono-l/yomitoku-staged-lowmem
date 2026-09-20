@@ -8,20 +8,21 @@
 
 ## 今動く面
 
-[YomiToku](https://github.com/kotaro-kinoshita/yomitoku) の検出と認識を別プロセスで回し、重み無しで読み順に戻す。
-作業台に検出器と認識器を同時に広げない。
+検出と認識を別プロセスで回し、重み無しで読み順に戻す。
+既定経路は yomitoku を import しない。
 
 ```bash
-pip install yomitoku==0.15.0
+pip install -r requirements.runtime.txt
 ./run_staged.sh path/to/image.jpg results
 python3 tests/test_assemble.py
+python3 tests/test_default_no_yomitoku.py
 ```
 
 `python3 tests/test_assemble.py` はモデルを載せない。凍結した v0 から本文が残るかだけを見る。
 
-YomiToku は現行の実行依存である。日常の最終形ではない。
+torch 比較と export は [comparison/](comparison/) と `weights/export_*.py`。そこだけ yomitoku 0.15.0 が要る。
 
 ## 注意
 
-- 本体のネットは YomiToku 側。このリポジトリは呼び出し順と凍結への導線である。
-- YomiToku は CC BY-NC-SA 4.0。商用は本体側のライセンスを見る。
+- 別置き ONNX / safetensors は git に載せない。ハッシュは `weights/manifest.json`。
+- 元重みのライセンスは CC BY-NC-SA 4.0。商用は元を見る。
