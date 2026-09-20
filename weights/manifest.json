@@ -1,46 +1,41 @@
 {
   "schema": "weights_pin/v0",
-  "note": "実行のたびに Hugging Face の最新を引かない。実体は weights/pinned または Drive 別置き。git には載せない。",
   "drive_folder": "https://drive.google.com/drive/folders/1HN5R00gE_wa0SuzZAaTqA6RJyaf_4J-G",
   "files": [
     {
       "id": "detector",
-      "role": "detect",
-      "hf_repo": "KotaroKinoshita/yomitoku-text-detector-dbnet-v2_1",
-      "revision": "3ac8375d1fd124e8074b013a32f2085d1199654c",
-      "remote_name": "model.safetensors",
       "path": "weights/pinned/detector/model.safetensors",
       "sha256": "fa090966e7f7c1783a10d8543d150405487906ef3aabcb07db7bc57b39a1e7c5",
       "bytes": 102492968,
-      "drive_file_id": "1b3mvWpwfnQvBn6EE0k1z6n8cj2ZWZhCL"
+      "drive_file_id": "1b3mvWpwfnQvBn6EE0k1z6n8cj2ZWZhCL",
+      "hf_repo": "KotaroKinoshita/yomitoku-text-detector-dbnet-v2_1",
+      "revision": "3ac8375d1fd124e8074b013a32f2085d1199654c",
+      "remote_name": "model.safetensors"
     },
     {
       "id": "recognizer",
-      "role": "recognize",
-      "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
-      "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
-      "remote_name": "model.safetensors",
       "path": "weights/pinned/recognizer/model.safetensors",
       "sha256": "498db515b5cc7917be3b27664569eddda63e709f70e0de118bac95e97c7dd689",
       "bytes": 36097960,
-      "drive_file_id": "1ukXNL3Db5iHAfcMXtL0Sh9P3IlDBTpeA"
+      "drive_file_id": "1ukXNL3Db5iHAfcMXtL0Sh9P3IlDBTpeA",
+      "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
+      "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
+      "remote_name": "model.safetensors"
     },
     {
       "id": "recognizer_manifest",
-      "role": "recognize-meta",
-      "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
-      "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
-      "remote_name": "v5_manifest.json",
       "path": "weights/pinned/recognizer/v5_manifest.json",
       "sha256": "15c731106864e5de07e0a513921791d7d6514b509788d31861333fb92c6fd2ec",
       "bytes": 500,
-      "drive_file_id": "1SCcQKVnHQMwqmesVsNH0olBsHi9C3iHL"
+      "drive_file_id": "1SCcQKVnHQMwqmesVsNH0olBsHi9C3iHL",
+      "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
+      "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
+      "remote_name": "v5_manifest.json"
     }
   ],
   "graphs": [
     {
       "id": "detector_onnx",
-      "role": "detect-onnx",
       "path": "weights/pinned/detector/model.onnx",
       "sha256": "1236c4c1761956d91f7ac7c897983d8b062320c9c62d7d36b0c54e29b05e21f4",
       "bytes": 101894163,
@@ -48,12 +43,18 @@
     },
     {
       "id": "recognizer_encoder_onnx",
-      "role": "recognize-encoder-onnx",
       "path": "weights/pinned/recognizer/encoder.onnx",
       "sha256": "e6eab9c3266a6f986c5776929ec783e4fddec8e5e0325bc9fcbf503cc46d5b73",
       "bytes": 22193776,
-      "drive_file_id": "1xTlRF9ygh5c-IwT69BMtT8cKsIZw8uzs",
-      "note": "AR 展開の全量 ONNX ではない。encoder だけ。入力 1x3x32x800。"
+      "drive_file_id": "1xTlRF9ygh5c-IwT69BMtT8cKsIZw8uzs"
+    },
+    {
+      "id": "recognizer_decoder_step_onnx",
+      "path": "weights/pinned/recognizer/decoder_step.onnx",
+      "sha256": "79121be53a29db3f46dbae797c42157dbef93cca523e4f69aedac4e68e30c7fe",
+      "bytes": 14186494,
+      "drive_file_id": "1_--vmKboGsqUIbsyu2ArCv5MhpG0d0LT",
+      "note": "バッチ=1、len 動的。AR 展開ではない。"
     }
   ]
 }
