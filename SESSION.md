@@ -1,15 +1,16 @@
 # 次のセッションへ
 
-2026-09-21: 認識の encoder と decoder を別プロセスにした。
-stage_recognize_onnx.py は入口だけ。グラフは同時に載せない。
+2026-09-21: 結合重みで分割経路を一度通した。2GiB。
 
-| 段 | 入口 | 出口 |
-|---|---|---|
-| encode | 画像 + points | memory.npz |
-| decode | memory.npz + points | ocr.json |
-| gate | 画像 + points | 上を順に起こす |
+| 段 | 結果 |
+|---|---|
+| detect infer | pred 1184×1600 |
+| detect boxes | 35 箱 |
+| encode | memory.npz を書いて死ぬ |
+| decode | 35 箱 |
+| assemble | remain 3 文 |
 
-import 分割の試験は緑。重みを載せる往復はこの箱ではしていない。
+gate は memory を消す。
 
 ---
 
@@ -34,14 +35,13 @@ import 分割の試験は緑。重みを載せる往復はこの箱ではして�
 
 ## 今動いている面
 
-- 検出 infer → boxes
-- 認識 encode → decode
-- 輪郭開始は左縁、追跡に上限
-- INTER_AREA / warp 最終行 / SOF2 捨て
+- 検出 infer → boxes は 2GiB で生きる
+- 認識 encode → decode は 2GiB で生きる
+- remain 3 文
 
 ---
 
 ## 次
 
-結合した重みがある箱で、encode のあとに decoder が起きるか一度通す。
-または INTER_AREA の純 Python 縮小が遅いときの切り出し。
+INTER_AREA の純 Python 縮小が遅いときの切り出し。
+または 22 番も分割経路で一度通す。
