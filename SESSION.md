@@ -1,7 +1,7 @@
 # 次のセッションへ
 
-2026-09-20: cv2.rotate と cv2.mean を剥いだ。箱は exact。スコア差は 1e-6。
-残る cv2 は imread / resize / 輪郭 / warp。名前は tests/test_cv2_surface.py で凍結。
+2026-09-20: cv2.boxPoints を剥いだ。箱は exact。
+残る cv2 は imread / resize / 輪郭 / fillPoly / warp。
 
 ---
 
@@ -21,12 +21,12 @@
 
 ## 今動いている面
 
-- 既定: cv2（imread/resize/輪郭/warp）/ numpy / onnxruntime
-- rotate は np.rot90。box score の平均は numpy
+- 既定: cv2（imread/resize/輪郭/fillPoly/warp）/ numpy / onnxruntime
+- boxPoints / rotate / mean は numpy
 - 箱 37/37 exact
 
 ---
 
 ## 次
 
-残る cv2 と onnxruntime は腰。剥ぐなら exact 裁断を先に書く。
+残る cv2 と onnxruntime は腰。JPEG・輪郭・warp を剥ぐ裁断はまだない。
