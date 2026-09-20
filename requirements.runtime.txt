@@ -1,5 +1,4 @@
-# 既定経路。yomitoku / torch / pyclipper は入れない。
-# 2026-09-20 の実行環境で箱が exact だった版。
-opencv-python==5.0.0.93
+# 既定経路。yomitoku / torch / pyclipper / opencv-python は入れない。
+# 画素の読みと箱出しは cvsurf。残る pip は配列と推論エンジン。
 numpy==2.2.6
 onnxruntime==1.23.2
