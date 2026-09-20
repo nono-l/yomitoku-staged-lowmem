@@ -2,8 +2,8 @@
 
 コメント方針は [CODING.md](CODING.md)。
 
-このセッション（2026-09-20）: P1b / T2 まで緑。
-次は C3（検出の既定を ONNX にする）。認識の既定はまだ旧面。
+2026-09-20 App Builder: 重み実体を Drive へ別置き。git には載せていない。
+次は C3（検出の既定を ONNX）。
 
 ---
 
@@ -22,18 +22,30 @@ https://github.com/nono-l/yomitoku-staged-lowmem
 4. latest を黙って引かない。
 5. 提出してから動かさない。
 6. safetensors / onnx 実体を git に載せない。
-7. T2 が緑でも、C3 の前に検出の既定を黙って ONNX にしない。載せ替えは次の切。
+7. T2 が緑でも C3 の前に検出既定を黙って ONNX にしない。
 
 ---
 
-## 今動いている面
+## 別置き（Drive）
 
-- 既定入口: `run_staged.sh` はまだ torch 検出 + tiny 認識 + assemble
-- 検出 ONNX 書き出し: `python3 weights/export_detector_onnx.py`
-- T2: `python3 tests/test_detect_compare.py`
+フォルダ: https://drive.google.com/drive/folders/1HN5R00gE_wa0SuzZAaTqA6RJyaf_4J-G
 
-実測 2026-09-20 settei/21: 旧検出と ONNX 検出は 37 箱、exact 一致、min IoU 1.0。
-opset は 16 指定が 18 に落ちる。単一ファイル ONNX 101894186 bytes、sha256 `01b00d6523112c577a33d025326596d96720cd5d89e75a06a74e1775ec4c8add`。
+- detector 98MB `1b3mvWpwfnQvBn6EE0k1z6n8cj2ZWZhCL` sha256 fa090966…
+- recognizer 35MB `1ukXNL3Db5iHAfcMXtL0Sh9P3IlDBTpeA` sha256 498db515…
+- v5_manifest `1SCcQKVnHQMwqmesVsNH0olBsHi9C3iHL`
+
+正本の入手はまだ HF revision（pin_weights.py）。Drive は容量用のコピー。
+
+---
+
+## 重みが RAM に載らないとき
+
+今の 98MB+35MB は、torch を載せた後の「二つ同時」に比べて小さい。
+分割ロードは可能だが、YomiToku のスイッチではない。次の階:
+1. プロセス分割（済）
+2. ONNX mmap
+3. バックボーンとヘッドを別グラフにし、中間激活を盤へ落とす
+層ごとに重みを切って順に matmul するのは 3 の後。激活地図が重みより重い。
 
 ---
 
@@ -41,16 +53,6 @@ opset は 16 指定が 18 に落ちる。単一ファイル ONNX 101894186 bytes
 
 | ID | 状態 |
 |---|---|
-| C0–C2 / P0–P1a | 済 |
-| P1b | 済 書き出しスクリプト |
-| T2 | 済 exact |
-| C3 | 次。検出既定を ONNX |
+| C0–T2 / P1b | 済 |
+| C3 | 次。検出既定 ONNX |
 | P1c | 認識 ONNX |
-
----
-
-## 既知の粗
-
-- convert_onnx は外部 .data を出す。export スクリプトが単一ファイルへ踏む。
-- YomiToku infer_onnx はパッケージ内 onnx/ を見る。C3 で別置きパスを既定にする。
-- サンドボックス 1.9GiB。

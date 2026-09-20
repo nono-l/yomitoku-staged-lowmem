@@ -1,6 +1,7 @@
 {
   "schema": "weights_pin/v0",
-  "note": "実行のたびに Hugging Face の最新を引かない。ファイルは weights/pinned に別置きし、git には載せない。",
+  "note": "実行のたびに Hugging Face の最新を引かない。実体は weights/pinned または Drive 別置き。git には載せない。",
+  "drive_folder": "https://drive.google.com/drive/folders/1HN5R00gE_wa0SuzZAaTqA6RJyaf_4J-G",
   "files": [
     {
       "id": "detector",
@@ -10,7 +11,8 @@
       "remote_name": "model.safetensors",
       "path": "weights/pinned/detector/model.safetensors",
       "sha256": "fa090966e7f7c1783a10d8543d150405487906ef3aabcb07db7bc57b39a1e7c5",
-      "bytes": 102492968
+      "bytes": 102492968,
+      "drive_file_id": "1b3mvWpwfnQvBn6EE0k1z6n8cj2ZWZhCL"
     },
     {
       "id": "recognizer",
@@ -20,7 +22,8 @@
       "remote_name": "model.safetensors",
       "path": "weights/pinned/recognizer/model.safetensors",
       "sha256": "498db515b5cc7917be3b27664569eddda63e709f70e0de118bac95e97c7dd689",
-      "bytes": 36097960
+      "bytes": 36097960,
+      "drive_file_id": "1ukXNL3Db5iHAfcMXtL0Sh9P3IlDBTpeA"
     },
     {
       "id": "recognizer_manifest",
@@ -30,7 +33,8 @@
       "remote_name": "v5_manifest.json",
       "path": "weights/pinned/recognizer/v5_manifest.json",
       "sha256": "15c731106864e5de07e0a513921791d7d6514b509788d31861333fb92c6fd2ec",
-      "bytes": 500
+      "bytes": 500,
+      "drive_file_id": "1SCcQKVnHQMwqmesVsNH0olBsHi9C3iHL"
     }
   ]
 }
