@@ -1,7 +1,8 @@
 """縮小・拡大。OpenCV の名前を残し、補間はここで固定する。
 
 INTER_AREA は縮小の平均、INTER_LINEAR は双線形。
-公式の端の丸めとは一致しないことがある。箱の裁断は tests/test_cvsurf_geom.py。
+公式 INTER_AREA は端の分数重みを使う。ここはブロック平均なので画素が違う。
+settei21 では公式縮小＋既定後処理で 36 箱、ここの縮小だと 29 箱。輪郭の差ではない。
 """
 
 from __future__ import annotations
