@@ -14,6 +14,22 @@ MAX_CANDIDATES = 1500
 UNCLIP_RATIO = 3.5
 
 
+def _box_points(rect):
+    """cv2.boxPoints と同じ。minAreaRect の角度規約に合わせる。"""
+    (cx, cy), (bw, bh), ang = rect
+    theta = np.deg2rad(ang)
+    c, s = np.cos(theta), np.sin(theta)
+    dx, dy = bw / 2.0, bh / 2.0
+    corners = np.array(
+        [[-dx, -dy], [dx, -dy], [dx, dy], [-dx, dy]], dtype=np.float32
+    )
+    R = np.array([[c, -s], [s, c]], dtype=np.float32)
+    pts = corners @ R.T
+    pts[:, 0] += cx
+    pts[:, 1] += cy
+    return pts
+
+
 def _area_length(box):
     x = box[:, 0]
     y = box[:, 1]
@@ -37,7 +53,7 @@ def _unclip(box, unclip_ratio):
 
 def _mini_boxes(contour):
     bounding_box = cv2.minAreaRect(contour)
-    points = sorted(list(cv2.boxPoints(bounding_box)), key=lambda x: x[0])
+    points = sorted(list(_box_points(bounding_box)), key=lambda x: x[0])
     if points[1][1] > points[0][1]:
         index_1, index_4 = 0, 1
     else:
