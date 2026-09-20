@@ -1,7 +1,7 @@
 # 次のセッションへ
 
-2026-09-20: 認識入口（rec/crop と stage_recognize_onnx）も cvsurf に切った。
-既定経路に pip の cv2 import は残っていない。
+2026-09-20: settei21 を BMP にして remain を取り直した。箱は 30（旧 37）。must_remain 3 文は本文に残る。
+原 JPEG は SOF2。基線以外は明示に捨てる。pos_queries は onnx パッケージなし。
 
 ---
 
@@ -24,12 +24,12 @@
 
 ## 今動いている面
 
-- 既定 import は `from cvsurf import cv2`（検出も認識も）
-- BMP / PNG 往復、単応往復、合成の輪郭・矩形は緑
-- JPEG は基線のみ。公式画素 exact ではない
+- 既定 import は `from cvsurf import cv2`
+- settei21 remain: 夜光餃子座 / パートタイマー制服資料 / 光る餃子座ピン
+- JPEG は基線 SOF0 のみ
 
 ---
 
 ## 次
 
-settei21 で remain を取り直す。
+プログレッシブ JPEG を支えるか、試験用の基線フィクスチャを置く。

@@ -48,6 +48,7 @@ python3 tests/test_cvsurf_io.py
 - 結合後の ONNX / safetensors は git に載せない。parts とハッシュは `weights/manifest.json`。
 - 元重みのライセンスは CC BY-NC-SA 4.0。商用は元を見る。
 - JPEG / PNG / BMP の読み、縮小、輪郭、歪み補正は `cvsurf/`。ONNX Runtime は推論に残す。
+- JPEG は基線 SOF0 だけ。プログレッシブは BMP か PNG に変換してから渡す。
 
 ## 他の紙
 
