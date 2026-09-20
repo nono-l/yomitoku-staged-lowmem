@@ -11,7 +11,7 @@
 | 認識 | 画像 + points | `ocr.json`（検出順の活字） |
 | 組み立て | ocr.json | `document.json`（読み順と隔離） |
 
-検出と認識は別プロセス。検出の推論と箱出しも別プロセス。同じプロセスに載せない。
+検出と認識は別プロセス。検出の推論と箱出し、認識の encoder と decoder も別プロセス。同じプロセスに載せない。
 字の帯だけ切る。絵として何が描いてあるかは出さない。
 
 出口の欄は [schema/ocr_raw.v0.md](schema/ocr_raw.v0.md) と [schema/document_ocr.v1.md](schema/document_ocr.v1.md)。
@@ -39,6 +39,7 @@ python3 tests/test_offset.py
 python3 tests/test_join_weights.py
 python3 tests/test_cvsurf_geom.py
 python3 tests/test_detect_split.py
+python3 tests/test_recognize_split.py
 python3 tests/test_cvsurf_io.py
 ```
 

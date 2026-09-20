@@ -1,7 +1,15 @@
 # 次のセッションへ
 
-2026-09-21: 輪郭の開始点を配列で拾う。全画素の二重ループは止めた。
-1184×1600 に帯 2 本で 0.01 秒。
+2026-09-21: 認識の encoder と decoder を別プロセスにした。
+stage_recognize_onnx.py は入口だけ。グラフは同時に載せない。
+
+| 段 | 入口 | 出口 |
+|---|---|---|
+| encode | 画像 + points | memory.npz |
+| decode | memory.npz + points | ocr.json |
+| gate | 画像 + points | 上を順に起こす |
+
+import 分割の試験は緑。重みを載せる往復はこの箱ではしていない。
 
 ---
 
@@ -20,19 +28,20 @@
 11. この部品に場面語を混ぜない。
 12. README を作業台に戻さない。SESSION を消さない。
 13. 検出の推論と箱出しを同じプロセスに戻さない。
+14. 認識の encoder と decoder を同じプロセスに戻さない。
 
 ---
 
 ## 今動いている面
 
-- 輪郭開始は左縁だけ
-- 輪郭追跡に上限
-- 検出は infer → boxes
+- 検出 infer → boxes
+- 認識 encode → decode
+- 輪郭開始は左縁、追跡に上限
 - INTER_AREA / warp 最終行 / SOF2 捨て
 
 ---
 
 ## 次
 
-認識は encoder と decoder を同じプロセスに載せている。
-離す必要が残るか、箱ごとに encoder を捨てるだけで足りるか見る。
+結合した重みがある箱で、encode のあとに decoder が起きるか一度通す。
+または INTER_AREA の純 Python 縮小が遅いときの切り出し。
