@@ -85,6 +85,19 @@ def test_find_contours_square():
     print("ok findContours")
 
 
+def test_warp_keeps_last_row():
+    img = np.arange(30, dtype=np.uint8).reshape(3, 10)
+    m = np.eye(3, dtype=np.float64)
+    out = surf.warpPerspective(img, m, (10, 3))
+    if out.shape != (3, 10):
+        raise SystemExit(f"warp shape {out.shape}")
+    if int(out[2].sum()) == 0:
+        raise SystemExit("warp dropped last row")
+    if not np.array_equal(out, img):
+        raise SystemExit(f"identity warp {out}")
+    print("ok warp last row")
+
+
 def main():
     test_homography_roundtrip()
     test_fill_poly_closed()
@@ -92,6 +105,7 @@ def main():
     test_area_integer_scale()
     test_min_area_rect_axis()
     test_find_contours_square()
+    test_warp_keeps_last_row()
     print("ok cvsurf geom")
 
 
