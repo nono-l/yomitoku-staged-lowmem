@@ -17,7 +17,6 @@ ALLOWED = {
     "INTER_AREA",
     "INTER_LINEAR",
     "RETR_LIST",
-    "boxPoints",
     "fillPoly",
     "findContours",
     "getPerspectiveTransform",
