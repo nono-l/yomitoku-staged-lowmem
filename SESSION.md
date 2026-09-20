@@ -1,16 +1,7 @@
 # 次のセッションへ
 
-2026-09-21: 結合重みで分割経路を一度通した。2GiB。
-
-| 段 | 結果 |
-|---|---|
-| detect infer | pred 1184×1600 |
-| detect boxes | 35 箱 |
-| encode | memory.npz を書いて死ぬ |
-| decode | 35 箱 |
-| assemble | remain 3 文 |
-
-gate は memory を消す。
+2026-09-21: INTER_AREA の画素累積を行列積にした。
+600×800→1184×1600 が 1.6 秒。整数倍の試験は緑。
 
 ---
 
@@ -35,13 +26,13 @@ gate は memory を消す。
 
 ## 今動いている面
 
-- 検出 infer → boxes は 2GiB で生きる
-- 認識 encode → decode は 2GiB で生きる
-- remain 3 文
+- 検出 infer → boxes、認識 encode → decode（2GiB）
+- INTER_AREA は重み行列
+- 輪郭開始は左縁
 
 ---
 
 ## 次
 
-INTER_AREA の純 Python 縮小が遅いときの切り出し。
-または 22 番も分割経路で一度通す。
+22 番を分割経路で一度通す。
+または重み行列の構築ループ自体を配列化する。

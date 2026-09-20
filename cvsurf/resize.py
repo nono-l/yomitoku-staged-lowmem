@@ -75,25 +75,26 @@ def _area(src, new_h, new_w):
     return out.astype(src.dtype, copy=False)
 
 
-def _box_1d(arr, old, new, axis):
-    if old == new:
-        return arr
-    arr = np.moveaxis(arr, axis, -1)
-    lead = arr.shape[:-1]
-    out = np.zeros(lead + (new,), dtype=np.float64)
+def _box_weights(old, new):
+    """元軸 old → 先軸 new の重なり面積。列で割って平均にする。"""
+    w = np.zeros((old, new), dtype=np.float64)
     for i in range(new):
         a = i * old / new
         b = (i + 1) * old / new
         i0 = int(np.floor(a))
         i1 = min(int(np.ceil(b - 1e-12)), old - 1)
-        wsum = 0.0
-        acc = np.zeros(lead, dtype=np.float64)
         for k in range(i0, i1 + 1):
-            w = min(b, k + 1) - max(a, k)
-            if w <= 0:
-                continue
-            acc += arr[..., k] * w
-            wsum += w
-        if wsum > 0:
-            out[..., i] = acc / wsum
+            ww = min(b, k + 1) - max(a, k)
+            if ww > 0:
+                w[k, i] = ww
+    col = w.sum(axis=0, keepdims=True)
+    col[col == 0] = 1.0
+    return w / col
+
+
+def _box_1d(arr, old, new, axis):
+    if old == new:
+        return arr
+    arr = np.moveaxis(arr, axis, -1)
+    out = arr @ _box_weights(old, new)
     return np.moveaxis(out, -1, axis)
