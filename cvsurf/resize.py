@@ -1,8 +1,7 @@
 """縮小・拡大。OpenCV の名前を残し、補間はここで固定する。
 
-INTER_AREA は縮小の平均、INTER_LINEAR は双線形。
-公式 INTER_AREA は端の分数重みを使う。ここはブロック平均なので画素が違う。
-settei21 では公式縮小＋既定後処理で 36 箱、ここの縮小だと 29 箱。輪郭の差ではない。
+INTER_AREA は画素の重なり面積で平均する。拡大でも線形に落とさない。
+公式と同じく端は分数重み。整数倍の拡大は元画素の繰り返しになる。
 """
 
 from __future__ import annotations
@@ -19,7 +18,7 @@ def resize(src, dsize, interpolation=INTER_LINEAR):
     w, h = int(dsize[0]), int(dsize[1])
     if w < 1 or h < 1:
         raise ValueError("dsize")
-    if interpolation == INTER_AREA and (h < src.shape[0] or w < src.shape[1]):
+    if interpolation == INTER_AREA:
         return _area(src, h, w)
     return _linear(src, h, w)
 
@@ -65,26 +64,36 @@ def _linear(src, new_h, new_w):
 
 
 def _area(src, new_h, new_w):
+    """重なり面積の平均。軸は独立なので幅→高さの順。"""
     old_h, old_w = src.shape[:2]
-    ys = np.linspace(0, old_h, new_h + 1)
-    xs = np.linspace(0, old_w, new_w + 1)
-    out_shape = (new_h, new_w) + src.shape[2:]
-    acc = np.zeros(out_shape, dtype=np.float64)
-    src_f = src.astype(np.float64)
-    for i in range(new_h):
-        y0, y1 = ys[i], ys[i + 1]
-        iy0 = int(np.floor(y0))
-        iy1 = int(np.ceil(y1)) - 1
-        iy1 = min(iy1, old_h - 1)
-        for j in range(new_w):
-            x0, x1 = xs[j], xs[j + 1]
-            ix0 = int(np.floor(x0))
-            ix1 = int(np.ceil(x1)) - 1
-            ix1 = min(ix1, old_w - 1)
-            block = src_f[iy0 : iy1 + 1, ix0 : ix1 + 1]
-            if block.size == 0:
-                continue
-            acc[i, j] = block.mean(axis=(0, 1)) if src.ndim == 3 else block.mean()
+    if old_h == new_h and old_w == new_w:
+        return src.copy()
+    x = _box_1d(src.astype(np.float64), old_w, new_w, axis=1)
+    out = _box_1d(x, old_h, new_h, axis=0)
     if np.issubdtype(src.dtype, np.integer):
-        return np.clip(np.rint(acc), 0, np.iinfo(src.dtype).max).astype(src.dtype)
-    return acc.astype(src.dtype, copy=False)
+        return np.clip(np.rint(out), 0, np.iinfo(src.dtype).max).astype(src.dtype)
+    return out.astype(src.dtype, copy=False)
+
+
+def _box_1d(arr, old, new, axis):
+    if old == new:
+        return arr
+    arr = np.moveaxis(arr, axis, -1)
+    lead = arr.shape[:-1]
+    out = np.zeros(lead + (new,), dtype=np.float64)
+    for i in range(new):
+        a = i * old / new
+        b = (i + 1) * old / new
+        i0 = int(np.floor(a))
+        i1 = min(int(np.ceil(b - 1e-12)), old - 1)
+        wsum = 0.0
+        acc = np.zeros(lead, dtype=np.float64)
+        for k in range(i0, i1 + 1):
+            w = min(b, k + 1) - max(a, k)
+            if w <= 0:
+                continue
+            acc += arr[..., k] * w
+            wsum += w
+        if wsum > 0:
+            out[..., i] = acc / wsum
+    return np.moveaxis(out, -1, axis)
