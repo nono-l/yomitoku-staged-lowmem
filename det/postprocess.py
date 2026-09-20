@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import math
 
-import cv2
 import numpy as np
+
+from cvsurf import cv2
 
 MIN_SIZE = 2
 THRESH = 0.3
