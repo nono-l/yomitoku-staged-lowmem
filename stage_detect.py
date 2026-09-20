@@ -58,7 +58,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    import cv2
+    from cvsurf import cv2
 
     img = cv2.imread(args.image)
     if img is None:
