@@ -1,6 +1,7 @@
 """二値画像の輪郭。RETR_LIST と CHAIN_APPROX_SIMPLE だけ実装する。
 
 穴も外輪郭も同じリストに並べる。階層は返すが使わない。
+開始点は左が空の前景だけを配列で拾う。全画素の二重ループはしない。
 """
 
 from __future__ import annotations
@@ -25,15 +26,17 @@ def findContours(image, mode, method):
     binary = img > 0
     h, w = binary.shape
     visited = np.zeros((h, w), dtype=np.uint8)
+    left_empty = np.empty_like(binary)
+    left_empty[:, 0] = True
+    left_empty[:, 1:] = ~binary[:, :-1]
+    ys, xs = np.nonzero(binary & left_empty)
     contours = []
-    for y in range(h):
-        for x in range(w):
-            if not binary[y, x] or visited[y, x]:
-                continue
-            if x == 0 or not binary[y, x - 1]:
-                chain = _follow(binary, x, y, visited)
-                if chain:
-                    contours.append(_approx(chain))
+    for y, x in zip(ys.tolist(), xs.tolist()):
+        if visited[y, x]:
+            continue
+        chain = _follow(binary, int(x), int(y), visited)
+        if chain:
+            contours.append(_approx(chain))
     hierarchy = np.zeros((len(contours), 4), dtype=np.int32)
     return contours, hierarchy
 
