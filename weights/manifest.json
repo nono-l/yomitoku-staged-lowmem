@@ -36,5 +36,16 @@
       "bytes": 500,
       "drive_file_id": "1SCcQKVnHQMwqmesVsNH0olBsHi9C3iHL"
     }
+  ],
+  "graphs": [
+    {
+      "id": "detector_onnx",
+      "role": "detect-onnx",
+      "path": "weights/pinned/detector/model.onnx",
+      "sha256": "1236c4c1761956d91f7ac7c897983d8b062320c9c62d7d36b0c54e29b05e21f4",
+      "bytes": 101894163,
+      "drive_file_id": "1xOdSHOY-eWQ48eG2UE7nFmv6np4krigH",
+      "note": "HF には無い。weights/export_detector_onnx.py で書く。verify_weights の必須には入れない。"
+    }
   ]
 }
