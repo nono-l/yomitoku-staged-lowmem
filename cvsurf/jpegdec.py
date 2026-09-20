@@ -88,6 +88,10 @@ class _Parser:
             self.pos += length - 2
             if marker == 0xC0:
                 self._sof(payload)
+            elif marker in (0xC1, 0xC2, 0xC3):
+                raise ValueError(
+                    f"jpeg not baseline SOF0 (got 0x{marker:02X}); convert to BMP/PNG"
+                )
             elif marker == 0xDB:
                 self._dqt(payload)
             elif marker == 0xC4:
