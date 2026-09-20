@@ -45,6 +45,23 @@ def test_resize_shape():
     print("ok resize shape")
 
 
+def test_area_integer_scale():
+    from cvsurf.consts import INTER_AREA
+
+    src = np.array([[1, 2], [3, 4]], dtype=np.uint8)
+    up = surf.resize(src, (4, 4), interpolation=INTER_AREA)
+    expect_up = np.array(
+        [[1, 1, 2, 2], [1, 1, 2, 2], [3, 3, 4, 4], [3, 3, 4, 4]], dtype=np.uint8
+    )
+    if not np.array_equal(up, expect_up):
+        raise SystemExit(f"area 2x up {up}")
+    block = np.array([[10, 10, 20, 20], [10, 10, 20, 20], [30, 30, 40, 40], [30, 30, 40, 40]], dtype=np.uint8)
+    down = surf.resize(block, (2, 2), interpolation=INTER_AREA)
+    if not np.array_equal(down, src * 10):
+        raise SystemExit(f"area 2x down {down}")
+    print("ok area integer scale")
+
+
 def test_min_area_rect_axis():
     pts = np.array([[0, 0], [10, 0], [10, 4], [0, 4]], dtype=np.float32)
     (cx, cy), (bw, bh), _ang = surf.minAreaRect(pts)
@@ -72,6 +89,7 @@ def main():
     test_homography_roundtrip()
     test_fill_poly_closed()
     test_resize_shape()
+    test_area_integer_scale()
     test_min_area_rect_axis()
     test_find_contours_square()
     print("ok cvsurf geom")
