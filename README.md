@@ -18,17 +18,10 @@
 
 ## 動かしたいとき
 
-実体の ONNX は git に無い。先に置く。
+実行用 ONNX は 40MiB 未満の parts として git にある（合計 270MB 程度）。結合してから使う。
 
 1. `pip install -r requirements.runtime.txt`
-2. [Drive](https://drive.google.com/drive/folders/1HN5R00gE_wa0SuzZAaTqA6RJyaf_4J-G) から次の三つを下ろし、名前そのまま置く。
-
-| ファイル | 置く場所 |
-|---|---|
-| `model.onnx` | `weights/pinned/detector/model.onnx` |
-| `encoder_dynw.onnx` | `weights/pinned/recognizer/encoder_dynw.onnx` |
-| `decoder_step_dynw.onnx` | `weights/pinned/recognizer/decoder_step_dynw.onnx` |
-
+2. `python3 weights/join_weights.py`
 3. `python3 weights/verify_weights.py`
 4. `./run_staged.sh path/to/image.jpg results`
 
@@ -43,13 +36,14 @@ python3 tests/test_assemble.py
 python3 tests/test_default_no_yomitoku.py
 python3 tests/test_cv2_surface.py
 python3 tests/test_offset.py
+python3 tests/test_join_weights.py
 ```
 
-凍結した出力から本文が残るか、余計な import が無いか、箱の膨らましが動いていないかを見る。
+凍結した出力から本文が残るか、余計な import が無いか、箱の膨らましが動いていないか、parts が元に戻るかを見る。
 
 ## 注意
 
-- 別置き ONNX / safetensors は git に載せない。ハッシュは `weights/manifest.json`。
+- 結合後の ONNX / safetensors は git に載せない。parts とハッシュは `weights/manifest.json`。
 - 元重みのライセンスは CC BY-NC-SA 4.0。商用は元を見る。
 - JPEG 読み、縮小、輪郭、歪み補正、ONNX Runtime は実行に残す。置き換えない。
 
@@ -59,7 +53,7 @@ GitHub が最初に見せるのはこの README だけ。他の紙はここか�
 
 | 紙 | 何か |
 |---|---|
-| [weights/README.md](weights/README.md) | 実行用 ONNX の置き場所 |
+| [weights/README.md](weights/README.md) | parts の結合と、Drive からの別置き |
 | [schema/](schema/) | 出てくる JSON の契約 |
 | [SESSION.md](SESSION.md) | 続きの作業記録。来客用ではない |
 | [CODING.md](CODING.md) | 直す人向けの書き方 |

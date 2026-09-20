@@ -7,3 +7,4 @@ venv/
 *.jpeg
 *.png
 weights/pinned/
+*.joining

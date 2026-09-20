@@ -3,6 +3,7 @@
 
 既定は実行に使う graphs と字表。safetensors は比較・再 export 用で、
 入口の条件にしない。無い・違うなら失敗する。ネットへ救済しに行かない。
+parts があるのに pinned が無いときは結合してから見る。
 """
 
 from __future__ import annotations
@@ -59,15 +60,66 @@ def runtime_items(man: dict) -> list:
     return runtime_graphs(man) + runtime_resources(man)
 
 
+def join_item(root: str, item: dict) -> None:
+    dest = os.path.join(root, item["path"])
+    parts = sorted(item.get("parts") or [], key=lambda p: p["index"])
+    if not parts:
+        return
+    if os.path.isfile(dest) and os.path.getsize(dest) == item["bytes"]:
+        if sha256_file(dest) == item["sha256"]:
+            return
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    tmp = dest + ".joining"
+    with open(tmp, "wb") as out:
+        for part in parts:
+            src = os.path.join(root, part["path"])
+            if not os.path.isfile(src):
+                raise FileNotFoundError(part["path"])
+            if os.path.getsize(src) != part["bytes"]:
+                raise ValueError(f"size {part['path']}")
+            if sha256_file(src) != part["sha256"]:
+                raise ValueError(f"hash {part['path']}")
+            with open(src, "rb") as f:
+                while True:
+                    chunk = f.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    out.write(chunk)
+    os.replace(tmp, dest)
+    if os.path.getsize(dest) != item["bytes"] or sha256_file(dest) != item["sha256"]:
+        raise ValueError(f"joined {item['path']}")
+
+
+def join_items(root: str, items: list) -> list:
+    errors = []
+    for item in items:
+        if not item.get("parts"):
+            continue
+        try:
+            join_item(root, item)
+        except FileNotFoundError as e:
+            errors.append(f"missing {e}")
+        except ValueError as e:
+            errors.append(str(e))
+    return errors
+
+
 def verify(root: str = ROOT, what: str = "runtime") -> list:
     man = load_manifest(root)
     if what == "runtime":
-        items = runtime_items(man)
-        if not items:
+        graphs = runtime_graphs(man)
+        if not graphs:
             return ["manifest has no runtime graphs"]
-        return _check(root, items)
+        errors = join_items(root, graphs)
+        if errors:
+            return errors
+        return _check(root, runtime_items(man))
     if what == "origin":
-        return _check(root, man.get("files", []))
+        files = man.get("files", [])
+        errors = join_items(root, files)
+        if errors:
+            return errors
+        return _check(root, files)
     raise ValueError(f"unknown what={what}")
 
 

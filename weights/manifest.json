@@ -1,5 +1,5 @@
 {
-  "schema": "weights_pin/v0",
+  "schema": "weights_pin/v1",
   "drive_folder": "https://drive.google.com/drive/folders/1HN5R00gE_wa0SuzZAaTqA6RJyaf_4J-G",
   "files": [
     {
@@ -10,7 +10,27 @@
       "drive_file_id": "1b3mvWpwfnQvBn6EE0k1z6n8cj2ZWZhCL",
       "hf_repo": "KotaroKinoshita/yomitoku-text-detector-dbnet-v2_1",
       "revision": "3ac8375d1fd124e8074b013a32f2085d1199654c",
-      "remote_name": "model.safetensors"
+      "remote_name": "model.safetensors",
+      "parts": [
+        {
+          "path": "weights/parts/detector/model.safetensors.part00",
+          "sha256": "30ac07b75dba3383a241f11027710363bbbd17af28cf920b6e44adcf0641c16c",
+          "bytes": 41943040,
+          "index": 0
+        },
+        {
+          "path": "weights/parts/detector/model.safetensors.part01",
+          "sha256": "d9b9836049dfa48f4d3e0c1632194779477fa51b8f09a631064f07ac2b8bd499",
+          "bytes": 41943040,
+          "index": 1
+        },
+        {
+          "path": "weights/parts/detector/model.safetensors.part02",
+          "sha256": "6289e4f88fe5bc4bc1082853ccde5e6a78a49217ab9ac425f1e079fe89c6504f",
+          "bytes": 18606888,
+          "index": 2
+        }
+      ]
     },
     {
       "id": "recognizer",
@@ -20,7 +40,15 @@
       "drive_file_id": "1ukXNL3Db5iHAfcMXtL0Sh9P3IlDBTpeA",
       "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
       "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
-      "remote_name": "model.safetensors"
+      "remote_name": "model.safetensors",
+      "parts": [
+        {
+          "path": "weights/parts/recognizer/model.safetensors.part00",
+          "sha256": "498db515b5cc7917be3b27664569eddda63e709f70e0de118bac95e97c7dd689",
+          "bytes": 36097960,
+          "index": 0
+        }
+      ]
     },
     {
       "id": "recognizer_manifest",
@@ -30,7 +58,15 @@
       "drive_file_id": "1SCcQKVnHQMwqmesVsNH0olBsHi9C3iHL",
       "hf_repo": "KotaroKinoshita/yomitoku-text-recognizer-parseq-tiny-dynw-v5",
       "revision": "abd24b78292afa849e206b42ebf72464ffd7eae5",
-      "remote_name": "v5_manifest.json"
+      "remote_name": "v5_manifest.json",
+      "parts": [
+        {
+          "path": "weights/parts/recognizer/v5_manifest.json.part00",
+          "sha256": "15c731106864e5de07e0a513921791d7d6514b509788d31861333fb92c6fd2ec",
+          "bytes": 500,
+          "index": 0
+        }
+      ]
     }
   ],
   "graphs": [
@@ -40,7 +76,27 @@
       "sha256": "1236c4c1761956d91f7ac7c897983d8b062320c9c62d7d36b0c54e29b05e21f4",
       "bytes": 101894163,
       "drive_file_id": "1xOdSHOY-eWQ48eG2UE7nFmv6np4krigH",
-      "runtime": true
+      "runtime": true,
+      "parts": [
+        {
+          "path": "weights/parts/detector/model.onnx.part00",
+          "sha256": "3c0bbd2cae5b0cb828aae0573169284c34bfecc947484f0523bb4b9276654c61",
+          "bytes": 41943040,
+          "index": 0
+        },
+        {
+          "path": "weights/parts/detector/model.onnx.part01",
+          "sha256": "2d8334bddb43e30afeeeb56c737c0214e16948eedae01b37f28d7d133139b888",
+          "bytes": 41943040,
+          "index": 1
+        },
+        {
+          "path": "weights/parts/detector/model.onnx.part02",
+          "sha256": "4c45993abd193360825529e0e548421ff051ec11636776db2c90c63db47230fb",
+          "bytes": 18008083,
+          "index": 2
+        }
+      ]
     },
     {
       "id": "recognizer_encoder_onnx",
@@ -63,20 +119,36 @@
     {
       "id": "recognizer_encoder_dynw_onnx",
       "path": "weights/pinned/recognizer/encoder_dynw.onnx",
-      "sha256": "1baa7e40a9ffa55d8bb78cf6521e15ee5281448d31169c1279a02047a3004b79",
-      "bytes": 22966948,
+      "sha256": "75306564f1511f17dfa19b335e9650780d12b2fb9ca6fea100211a5ac7ff9143",
+      "bytes": 23026433,
       "drive_file_id": "1sDOBIYnkAWFDlaydO6k3rmgiwaCWCJ5s",
       "runtime": true,
-      "note": "幅動的。1x3x32xW。既定認識の encoder。"
+      "note": "幅動的。1x3x32xW。既定認識の encoder。",
+      "parts": [
+        {
+          "path": "weights/parts/recognizer/encoder_dynw.onnx.part00",
+          "sha256": "75306564f1511f17dfa19b335e9650780d12b2fb9ca6fea100211a5ac7ff9143",
+          "bytes": 23026433,
+          "index": 0
+        }
+      ]
     },
     {
       "id": "recognizer_decoder_step_dynw_onnx",
       "path": "weights/pinned/recognizer/decoder_step_dynw.onnx",
-      "sha256": "e00d9678c6f390d9801c015057c233db2209238a35a4f8c2ee8b5f23ec063ebc",
-      "bytes": 14186461,
+      "sha256": "07309f934e99984dff8cb160677fa5f1b77bf1cb9af66a37a05ddc4e2c719a80",
+      "bytes": 14201660,
       "drive_file_id": "1J8G8suiR57lSgfJsR3FUZ0KYM89PVs-r",
       "runtime": true,
-      "note": "memory seq 動的。AR 展開ではない。既定認識の decoder。"
+      "note": "memory seq 動的。AR 展開ではない。既定認識の decoder。",
+      "parts": [
+        {
+          "path": "weights/parts/recognizer/decoder_step_dynw.onnx.part00",
+          "sha256": "07309f934e99984dff8cb160677fa5f1b77bf1cb9af66a37a05ddc4e2c719a80",
+          "bytes": 14201660,
+          "index": 0
+        }
+      ]
     }
   ],
   "resources": [
@@ -94,5 +166,6 @@
       "bytes": 2069,
       "runtime": true
     }
-  ]
+  ],
+  "part_bytes": 41943040
 }
