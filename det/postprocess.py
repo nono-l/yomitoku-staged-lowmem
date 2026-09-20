@@ -61,7 +61,10 @@ def _box_score(bitmap, contour):
     box[:, 0] = box[:, 0] - xmin
     box[:, 1] = box[:, 1] - ymin
     cv2.fillPoly(mask, box.reshape(1, -1, 2).astype(np.int32), 1)
-    return cv2.mean(bitmap[ymin : ymax + 1, xmin : xmax + 1], mask)[0]
+    region = bitmap[ymin : ymax + 1, xmin : xmax + 1]
+    if mask.any():
+        return float(region[mask.astype(bool)].mean())
+    return 0.0
 
 
 def boxes_from_binary(
