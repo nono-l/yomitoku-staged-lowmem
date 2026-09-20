@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""検出だけを載せて終了する。
+"""検出の入口。推論と箱出しは別プロセス。
 
 認識器を import しない。約 2GiB で両方を初期化すると 137 になる。
 既定は別置き ONNX。yomitoku も torch も使わない。
@@ -9,37 +9,15 @@ torch 検出は comparison/stage_detect_torch.py。
 from __future__ import annotations
 
 import argparse
-import gc
-import json
 import os
+import subprocess
 import sys
 
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
-
 DEFAULT_ONNX = os.path.join(ROOT, "weights", "pinned", "detector", "model.onnx")
-
-
-def detect_onnx(img, onnx_path: str):
-    import onnxruntime as ort
-    from det.postprocess import boxes_from_binary
-    from det.preprocess import prepare_bgr
-
-    tensor = prepare_bgr(img)
-    so = ort.SessionOptions()
-    so.intra_op_num_threads = 1
-    so.inter_op_num_threads = 1
-    sess = ort.InferenceSession(
-        onnx_path, sess_options=so, providers=["CPUExecutionProvider"]
-    )
-    out = sess.run(["output"], {"input": tensor})[0]
-    ori_h, ori_w = img.shape[:2]
-    quads, scores = boxes_from_binary(out, (ori_h, ori_w))
-    return quads, scores
 
 
 def main() -> None:
@@ -56,29 +34,38 @@ def main() -> None:
         default=DEFAULT_ONNX,
         help="別置き検出グラフ",
     )
+    parser.add_argument(
+        "--keep-pred",
+        action="store_true",
+        help="予測図 npz を残す",
+    )
     args = parser.parse_args()
 
-    from cvsurf import cv2
-
-    img = cv2.imread(args.image)
-    if img is None:
-        raise SystemExit(f"failed to read image: {args.image}")
-    print(f"img {img.shape} backend onnx", flush=True)
-
-    if not os.path.isfile(args.onnx):
-        raise SystemExit(
-            f"missing ONNX: {args.onnx}\nexport: python3 comparison/export/export_detector_onnx.py"
-        )
-    points, scores = detect_onnx(img, args.onnx)
-
-    print(f"n_boxes {len(points)}", flush=True)
-    out_dir = os.path.dirname(os.path.abspath(args.out))
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
-    with open(args.out, "w", encoding="utf-8") as f:
-        json.dump({"points": points, "scores": scores}, f)
-    print(f"wrote {args.out}", flush=True)
-    gc.collect()
+    out_abs = os.path.abspath(args.out)
+    pred = out_abs[:-5] + ".pred.npz" if out_abs.endswith(".json") else out_abs + ".pred.npz"
+    py = sys.executable
+    subprocess.check_call(
+        [
+            py,
+            os.path.join(ROOT, "stage_detect_infer.py"),
+            args.image,
+            "-o",
+            pred,
+            "--onnx",
+            args.onnx,
+        ]
+    )
+    subprocess.check_call(
+        [
+            py,
+            os.path.join(ROOT, "stage_detect_boxes.py"),
+            pred,
+            "-o",
+            args.out,
+        ]
+    )
+    if not args.keep_pred and os.path.isfile(pred):
+        os.remove(pred)
     print("detect done", flush=True)
 
 
