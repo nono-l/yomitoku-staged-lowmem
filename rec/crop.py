@@ -50,7 +50,8 @@ def extract_roi_with_perspective(img, quad):
 def rotate_text_image(img, thresh_aspect=2):
     h, w = img.shape[:2]
     if h > thresh_aspect * w:
-        img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        # cv2.ROTATE_90_COUNTERCLOCKWISE と同じ。90度だけ。
+        img = np.rot90(img, 1)
     return img
 
 
