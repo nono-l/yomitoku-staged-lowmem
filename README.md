@@ -28,7 +28,7 @@ pip install -r requirements.runtime.txt
 
 `run_staged.sh` が parts を結合し、検出・認識・組み立てを別プロセスで順に呼ぶ。出口は `results/points.json`、`results/ocr.json`、`results/document.json`。
 
-JPEG がプログレッシブだと読めない。BMP か PNG、または基線 JPEG にする。無い・違うと失敗する。ネットへ取りに行かない。置方は [weights/README.md](weights/README.md)。
+JPEG がプログレッシブだと読めない。BMP か PNG、または基線 JPEG にする。無い・違うと失敗する。ネットへ取りに行かない。置き方は [weights/README.md](weights/README.md)。
 
 普通の実行は cvsurf と ONNX Runtime と numpy を使う。yomitoku / torch / pyclipper / opencv-python は import しない。
 
@@ -44,6 +44,7 @@ python3 tests/test_join_weights.py
 python3 tests/test_cvsurf_geom.py
 python3 tests/test_detect_split.py
 python3 tests/test_detect_tiles.py
+python3 tests/test_detect_on_tiles.py
 python3 tests/test_recognize_split.py
 python3 tests/test_cvsurf_io.py
 ```
