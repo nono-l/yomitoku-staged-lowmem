@@ -12,6 +12,7 @@
 | schema | `"detect_tiles/v0"` | 箱の JSON と混ぜない |
 | width / height | 整数 | 元画像の大きさ |
 | tile | 整数 | 切った一辺 |
+| min_ink | 数 | 余白を落とす閾値。0 なら画素を見ない |
 | tiles | オブジェクトの配列 | 箱がほとんど無い矩形 |
 
 tiles の各要素は `x y w h row col`。座標は元画像。

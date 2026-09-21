@@ -23,6 +23,8 @@ def main() -> None:
     parser.add_argument("--width", type=int, required=True)
     parser.add_argument("--height", type=int, required=True)
     parser.add_argument("--tile", type=int, default=320)
+    parser.add_argument("--image", default="", help="余白を落とすとき渡す")
+    parser.add_argument("--min-ink", type=float, default=-1.0)
     parser.add_argument("-o", "--out", default="results/tiles.json")
     args = parser.parse_args()
 
@@ -33,12 +35,31 @@ def main() -> None:
     if not isinstance(pack, dict):
         raise SystemExit("points.json はオブジェクトである")
     quads = pack.get("points") or []
-    tiles = empty_tiles(args.width, args.height, quads, tile=args.tile)
+    img = None
+    min_ink = 0.0
+    if args.image:
+        from cvsurf import cv2
+
+        img = cv2.imread(args.image)
+        if img is None:
+            raise SystemExit(f"failed to read image: {args.image}")
+        min_ink = 0.02 if args.min_ink < 0 else args.min_ink
+    elif args.min_ink > 0:
+        raise SystemExit("min-ink には image が要る")
+    tiles = empty_tiles(
+        args.width,
+        args.height,
+        quads,
+        tile=args.tile,
+        img=img,
+        min_ink=min_ink,
+    )
     doc = {
         "schema": "detect_tiles/v0",
         "width": args.width,
         "height": args.height,
         "tile": args.tile,
+        "min_ink": min_ink,
         "tiles": tiles,
     }
     out_dir = os.path.dirname(os.path.abspath(args.out))
