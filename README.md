@@ -3,6 +3,8 @@
 画素から図中の活字を、箱・文字列・スコア・読み順で出す部品。分野は知らない。
 店名も項目名も付けない。人物・服・部屋の説明も付けない。
 
+clone に parts 約 270MB が含まれる。動かす pip は numpy と onnxruntime。約 2GiB。
+
 ## 出すもの
 
 | 段 | 入口 | 出口 |
@@ -19,14 +21,14 @@
 
 ## 動かしたいとき
 
-実行用 ONNX は 40MiB 未満の parts として git にある（合計 270MB 程度）。結合してから使う。
+```bash
+pip install -r requirements.runtime.txt
+./run_staged.sh path/to/image.bmp results
+```
 
-1. `pip install -r requirements.runtime.txt`
-2. `python3 weights/join_weights.py`
-3. `python3 weights/verify_weights.py`
-4. `./run_staged.sh path/to/image.jpg results`
+`run_staged.sh` が parts を結合し、検出・認識・組み立てを別プロセスで順に呼ぶ。出口は `results/points.json`、`results/ocr.json`、`results/document.json`。
 
-無い・違うと失敗する。ネットへ取りに行かない。置き方の詳細は [weights/README.md](weights/README.md)。
+JPEG がプログレッシブだと読めない。BMP か PNG、または基線 JPEG にする。無い・違うと失敗する。ネットへ取りに行かない。置き方は [weights/README.md](weights/README.md)。
 
 普通の実行は cvsurf と ONNX Runtime と numpy を使う。yomitoku / torch / pyclipper / opencv-python は import しない。
 
