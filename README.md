@@ -28,7 +28,7 @@ pip install -r requirements.runtime.txt
 
 `run_staged.sh` が parts を結合し、検出・認識・組み立てを別プロセスで順に呼ぶ。出口は `results/points.json`、`results/ocr.json`、`results/document.json`。
 
-JPEG がプログレッシブだと読めない。BMP か PNG、または基線 JPEG にする。無い・違うと失敗する。ネットへ取りに行かない。置き方は [weights/README.md](weights/README.md)。
+JPEG がプログレッシブだと読めない。BMP か PNG、または基線 JPEG にする。無い・違うと失敗する。ネットへ取りに行かない。置方は [weights/README.md](weights/README.md)。
 
 普通の実行は cvsurf と ONNX Runtime と numpy を使う。yomitoku / torch / pyclipper / opencv-python は import しない。
 
@@ -43,6 +43,7 @@ python3 tests/test_offset.py
 python3 tests/test_join_weights.py
 python3 tests/test_cvsurf_geom.py
 python3 tests/test_detect_split.py
+python3 tests/test_detect_tiles.py
 python3 tests/test_recognize_split.py
 python3 tests/test_cvsurf_io.py
 ```
@@ -63,7 +64,7 @@ GitHub が最初に見せるのはこの README だけ。他の紙はここか�
 | 紙 | 何か |
 |---|---|
 | [weights/README.md](weights/README.md) | parts の結合と、Drive からの別置き |
-| [schema/](schema/) | 出てくる JSON の契約 |
+| [schema/](schema/) | 出てくる JSON の契約。空いた区画は detect_tiles/v0 |
 | [SESSION.md](SESSION.md) | 続きの作業記録。来客用ではない |
 | [CODING.md](CODING.md) | 直す人向けの書き方 |
 | [comparison/](comparison/) | 元実装との比較。普通の実行には要らない |
