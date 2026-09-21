@@ -48,6 +48,7 @@ python3 tests/test_detect_on_tiles.py
 python3 tests/test_merge_points.py
 python3 tests/test_recognize_split.py
 python3 tests/test_cvsurf_io.py
+python3 tests/test_detect_ink.py
 ```
 
 凍結した出力から本文が残るか、余計な import が無いか、箱の膨らましが動いていないか、parts が元に戻るかを見る。

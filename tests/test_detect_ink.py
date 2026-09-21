@@ -14,7 +14,15 @@ import numpy as np
 from det.ink_boxes import boxes_from_bgr
 
 
+def _no_ort(rel: str) -> None:
+    text = open(os.path.join(ROOT, rel), encoding="utf-8").read()
+    if "onnxruntime" in text or "InferenceSession" in text:
+        raise SystemExit(f"{rel} must not name onnxruntime")
+
+
 def main() -> None:
+    _no_ort("det/ink_boxes.py")
+    _no_ort("stage_detect_ink.py")
     blank = np.full((80, 120, 3), 240, dtype=np.uint8)
     q, s = boxes_from_bgr(blank)
     if q:
