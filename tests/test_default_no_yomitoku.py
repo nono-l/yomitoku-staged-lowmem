@@ -56,6 +56,8 @@ def main() -> None:
         bad.append("run_staged.sh mentions yomitoku")
     if "stage_recognize.py" in sh and "stage_recognize_onnx.py" not in sh:
         bad.append("run_staged.sh still calls torch rec")
+    if "stage_detect_tiles" in sh or "stage_detect_on_tiles" in sh or "stage_merge_points" in sh:
+        bad.append("run_staged.sh must not call tile path")
     if bad:
         raise SystemExit("import leaked:\n" + "\n".join(bad))
     if not allowed_hits:
