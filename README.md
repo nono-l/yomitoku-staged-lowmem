@@ -45,6 +45,7 @@ python3 tests/test_cvsurf_geom.py
 python3 tests/test_detect_split.py
 python3 tests/test_detect_tiles.py
 python3 tests/test_detect_on_tiles.py
+python3 tests/test_merge_points.py
 python3 tests/test_recognize_split.py
 python3 tests/test_cvsurf_io.py
 ```
