@@ -77,16 +77,12 @@ def _area(src, new_h, new_w):
 
 def _box_weights(old, new):
     """元軸 old → 先軸 new の重なり面積。列で割って平均にする。"""
-    w = np.zeros((old, new), dtype=np.float64)
-    for i in range(new):
-        a = i * old / new
-        b = (i + 1) * old / new
-        i0 = int(np.floor(a))
-        i1 = min(int(np.ceil(b - 1e-12)), old - 1)
-        for k in range(i0, i1 + 1):
-            ww = min(b, k + 1) - max(a, k)
-            if ww > 0:
-                w[k, i] = ww
+    i = np.arange(new, dtype=np.float64)
+    a = i * old / new
+    b = (i + 1) * old / new
+    k = np.arange(old, dtype=np.float64)[:, None]
+    w = np.minimum(b, k + 1) - np.maximum(a, k)
+    np.maximum(w, 0.0, out=w)
     col = w.sum(axis=0, keepdims=True)
     col[col == 0] = 1.0
     return w / col
