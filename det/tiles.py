@@ -1,7 +1,7 @@
 """既にある箱を避けて、空いた区画の矩形を出す。検出器は載せない。
 
 全域の最短辺を上げない。空いたところだけ二度目の検出に渡すための目録である。
-伸長もしない。
+伸長もしない。絵だけの区画も落とさない。落とすと細字も落ちる。
 """
 
 from __future__ import annotations
@@ -67,17 +67,19 @@ def empty_tiles(
             area = tw * th
             filled = sum(overlap_area(cell, b) for b in boxes)
             if area > 0 and filled / area <= max_fill:
-                if min_ink <= 0 or ink_ratio(img, x, y, tw, th) >= min_ink:
-                    out.append(
-                        {
-                            "x": x,
-                            "y": y,
-                            "w": tw,
-                            "h": th,
-                            "row": row,
-                            "col": col,
-                        }
-                    )
+                ink = ink_ratio(img, x, y, tw, th) if img is not None else None
+                if min_ink <= 0 or (ink is not None and ink >= min_ink):
+                    rec = {
+                        "x": x,
+                        "y": y,
+                        "w": tw,
+                        "h": th,
+                        "row": row,
+                        "col": col,
+                    }
+                    if ink is not None:
+                        rec["ink"] = round(float(ink), 4)
+                    out.append(rec)
             x += tile
             col += 1
         y += tile

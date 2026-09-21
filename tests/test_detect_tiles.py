@@ -42,6 +42,10 @@ def main() -> None:
     kept = empty_tiles(640, 320, [], tile=320, img=marked, min_ink=0.02)
     if len(kept) != 1:
         raise SystemExit(f"ink tile should remain, got {len(kept)}")
+    if "ink" not in kept[0]:
+        raise SystemExit("ink field missing")
+    if kept[0]["ink"] < 0.02:
+        raise SystemExit("ink field too small")
     if ink_ratio(blank, 0, 0, 320, 320) >= 0.02:
         raise SystemExit("blank ink_ratio")
     print("ok empty tiles", len(tiles), "vacant", len(vacant), "ink", len(kept))
