@@ -25,6 +25,12 @@ def main() -> None:
     parser.add_argument("image")
     parser.add_argument("-o", "--out", default="results/pred.npz")
     parser.add_argument("--onnx", default=DEFAULT_ONNX)
+    parser.add_argument(
+        "--shortest",
+        type=int,
+        default=0,
+        help="最短辺。0 なら本体と同じ 1280",
+    )
     args = parser.parse_args()
 
     import numpy as np
@@ -39,7 +45,8 @@ def main() -> None:
         raise SystemExit(f"failed to read image: {args.image}")
     h, w = img.shape[:2]
     print(f"img {img.shape} infer", flush=True)
-    tensor = prepare_bgr(img)
+    shortest = args.shortest if args.shortest > 0 else None
+    tensor = prepare_bgr(img) if shortest is None else prepare_bgr(img, shortest_edge_length=shortest)
     del img
     so = ort.SessionOptions()
     so.intra_op_num_threads = 1

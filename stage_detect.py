@@ -39,22 +39,29 @@ def main() -> None:
         action="store_true",
         help="予測図 npz を残す",
     )
+    parser.add_argument(
+        "--shortest",
+        type=int,
+        default=0,
+        help="最短辺。0 なら本体と同じ 1280",
+    )
     args = parser.parse_args()
 
     out_abs = os.path.abspath(args.out)
     pred = out_abs[:-5] + ".pred.npz" if out_abs.endswith(".json") else out_abs + ".pred.npz"
     py = sys.executable
-    subprocess.check_call(
-        [
-            py,
-            os.path.join(ROOT, "stage_detect_infer.py"),
-            args.image,
-            "-o",
-            pred,
-            "--onnx",
-            args.onnx,
-        ]
-    )
+    infer_cmd = [
+        py,
+        os.path.join(ROOT, "stage_detect_infer.py"),
+        args.image,
+        "-o",
+        pred,
+        "--onnx",
+        args.onnx,
+    ]
+    if args.shortest > 0:
+        infer_cmd.extend(["--shortest", str(args.shortest)])
+    subprocess.check_call(infer_cmd)
     subprocess.check_call(
         [
             py,

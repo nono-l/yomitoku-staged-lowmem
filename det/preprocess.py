@@ -38,9 +38,9 @@ def to_nchw(img):
     return np.transpose(img, (2, 0, 1))[None, ...].astype(np.float32)
 
 
-def prepare_bgr(bgr):
+def prepare_bgr(bgr, shortest_edge_length=SHORTEST):
     """BGR uint8 -> encoder 入力 (1,3,H,W)。本体と同じ色の順。"""
     x = bgr.copy()[:, :, ::-1].astype(np.float32)
-    x = resize_shortest_edge(x)
+    x = resize_shortest_edge(x, shortest_edge_length=shortest_edge_length)
     x = standardization_image(x)
     return to_nchw(x)
